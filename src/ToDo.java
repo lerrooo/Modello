@@ -14,6 +14,13 @@ public class ToDo {
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
     ArrayList<String> utentiAssociati = new ArrayList<String>();
 
+    ToDo(String titoloIniziale, Date data, String descrizioneIniziale, Utente utente){
+        titolo = titoloIniziale;
+        dataDiScadenza = data;
+        descrizione = descrizioneIniziale;
+        autore.nomeUtente = utente.nome;
+    }
+
     public ArrayList<String> getUtenti(){
         return utentiAssociati;
     }

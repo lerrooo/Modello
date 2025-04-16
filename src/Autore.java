@@ -1,5 +1,5 @@
 public class Autore {
-    String nomeUtente;
+    public String nomeUtente;
 
     public void grantPermission(){
 

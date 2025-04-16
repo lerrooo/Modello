@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 
 enum titoloBacheca{
     universita,
@@ -18,8 +19,8 @@ public class Bacheca {
         titolo = titoloInserimento;
     }
 
-    public void createToDo(){
-
+    public void createToDo(String titoloToDo, Date dataToDo, String descrizioneToDo, Utente utente){
+        toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
     }
 
     public void modifyToDo(){

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Utente {
-    String nome;
+    public String nome;
     String password;
 
     ArrayList<Bacheca> bacheche = new ArrayList<Bacheca>();
