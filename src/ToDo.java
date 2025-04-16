@@ -24,4 +24,11 @@ public class ToDo {
     public ArrayList<String> getUtenti(){
         return utentiAssociati;
     }
+    public void visualizeDeadline(){
+
+    }
+    public void modifyToDo(){
+
+    }
 }
+

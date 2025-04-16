@@ -4,11 +4,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         ArrayList<Utente> utenti = new ArrayList<Utente>();
-
         Utente utenteLoggato;
-
         registraUtente(utenti);
-
         System.out.println(utenti.get(0).nome);
     }
 
@@ -18,10 +15,10 @@ public class Main {
         String nomeTemp;
         String passwordTemp;
 
-        System.out.println("Inserisci il nome utente: ");
+        System.out.print("Inserisci il nome utente: ");
         nomeTemp = input.nextLine();
 
-        System.out.println("Inserisci la password");
+        System.out.print("Inserisci la password:");
         passwordTemp = input.nextLine();
 
         utenti.add(new Utente(nomeTemp, passwordTemp));

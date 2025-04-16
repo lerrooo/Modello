@@ -22,10 +22,10 @@ public class Bacheca {
     public void createToDo(String titoloToDo, Date dataToDo, String descrizioneToDo, Utente utente){
         toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
     }
-
-    public void modifyToDo(){
+    public void modifyBacheca(){
 
     }
+
 
     public void deleteToDo(){
 
@@ -34,5 +34,9 @@ public class Bacheca {
     public void changePositionToDo(){
 
     }
+    public void swapToDo(){
+
+    }
+
 
 }
