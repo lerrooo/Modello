@@ -1,0 +1,20 @@
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class ToDo {
+    String titolo;
+    Date dataDiScadenza;
+    String URL;
+    String descrizione;
+    Image Immagine;
+    Autore autore;
+    Boolean completato = false;
+
+    //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
+    ArrayList<String> utentiAssociati = new ArrayList<String>();
+
+    public ArrayList<String> getUtenti(){
+        return utentiAssociati;
+    }
+}
