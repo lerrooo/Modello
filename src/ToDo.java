@@ -29,17 +29,15 @@ public class ToDo {
     public void visualizeDeadline(){
 
     }
-    public void modifyToDo( int indiceModifica, String nuovoTitolo, Date nuovaData, String nuovaDescrizione, Autore nuovoAutore){
-
+    public void modifyToDo( String nuovoTitolo, Date nuovaData, String nuovaDescrizione, Autore nuovoAutore){
         if(nuovoTitolo != null)
-            titolo=nuovoTitolo;
+            this.titolo=nuovoTitolo;
         if(nuovaData != null)
-            dataDiScadenza=nuovaData;
+            this.dataDiScadenza=nuovaData;
         if(nuovaDescrizione != null)
-            descrizione=nuovaDescrizione;
+            this.descrizione=nuovaDescrizione;
         if(nuovoAutore != null)
-            autore=nuovoAutore;
+            this.autore=nuovoAutore;
     }
-
 }
 
