@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,9 +21,7 @@ public class Main {
 
         System.out.print("Inserisci la password:");
         passwordTemp = input.nextLine();
-
-        utenti.add(new Utente(nomeTemp, passwordTemp));
-
-    }
-
+        Utente nuovoUtente= new Utente(nomeTemp,passwordTemp);
+        utenti.add(nuovoUtente);
+  }
 }

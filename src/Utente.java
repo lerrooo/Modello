@@ -16,8 +16,16 @@ public class Utente {
         else
             System.out.println("Limite raggiunto");
     }
-    public void deleteBacheca(){
-
+    public void deleteBacheca(boolean confermaEliminazione, int indiceDaEliminare){
+        if(confermaEliminazione){
+            if(indiceDaEliminare>=0 && indiceDaEliminare<3){
+            bacheche.remove(indiceDaEliminare);
+            System.out.println("..elemento eliminato..");
+            }else
+                System.out.println("..elemento non trovato..");
+        }
+        else
+            System.out.println("..non è possibile fare l'eliminazione..");
     }
     public void searchToDo(){
 

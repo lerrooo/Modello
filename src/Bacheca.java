@@ -22,11 +22,14 @@ public class Bacheca {
     public void createToDo(String titoloToDo, Date dataToDo, String descrizioneToDo, Utente utente){
         toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
     }
-    public void modifyBacheca(){
-
+    public void modifyBacheca(String nuovoTitolo, String nuovaDescrizione, titoloBacheca nuovotitoloBacheca){
+    if(nuovotitoloBacheca != null)
+        this.titolo=nuovoTitolo;
+    if(nuovaDescrizione != null)
+        this.descrizione=nuovaDescrizione;
+    if(nuovotitoloBacheca != null)
+        this.tipoBacheca=nuovotitoloBacheca;
     }
-
-
     public void deleteToDo(){
 
     }

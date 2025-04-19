@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 public class ToDo {
     String titolo;
@@ -10,6 +11,7 @@ public class ToDo {
     Image Immagine;
     Autore autore;
     Boolean completato = false;
+    Scanner scanner= new Scanner(System.in);
 
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
     ArrayList<String> utentiAssociati = new ArrayList<String>();
@@ -27,8 +29,17 @@ public class ToDo {
     public void visualizeDeadline(){
 
     }
-    public void modifyToDo(){
+    public void modifyToDo( int indiceModifica, String nuovoTitolo, Date nuovaData, String nuovaDescrizione, Autore nuovoAutore){
 
+        if(nuovoTitolo != null)
+            titolo=nuovoTitolo;
+        if(nuovaData != null)
+            dataDiScadenza=nuovaData;
+        if(nuovaDescrizione != null)
+            descrizione=nuovaDescrizione;
+        if(nuovoAutore != null)
+            autore=nuovoAutore;
     }
+
 }
 

@@ -1,5 +1,10 @@
 public class Autore {
-    public String nomeUtente;
+    String nomeUtente;
+
+    Autore(String nomeIniziale) {
+        nomeUtente=nomeIniziale;
+
+    }
 
     public void grantPermission(){
 
