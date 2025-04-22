@@ -10,12 +10,14 @@ public class Utente {
         nome = nomeRegistrazione;
         password = passwordRegistrazione;
     }
+
     public void createBacheca(String titoloBacheca){
         if(bacheche.size() < 3)
             bacheche.add(new Bacheca(titoloBacheca));
         else
             System.out.println("Limite raggiunto");
     }
+
     public void deleteBacheca(boolean confermaEliminazione, int indiceDaEliminare){
         if(confermaEliminazione){
             if(indiceDaEliminare>=0 && indiceDaEliminare<3){
@@ -27,10 +29,25 @@ public class Utente {
         else
             System.out.println("..non è possibile fare l'eliminazione..");
     }
-    public void searchToDo(){
 
+    public void changePositionToDo(int indexBachecaStart, int indexBachecaEnd, int indexToDoStart, int indexToDoEnd){
+        bacheche.get(indexBachecaEnd).toDoList.add(indexToDoEnd, bacheche.get(indexBachecaStart).toDoList.get(indexToDoStart));
+        bacheche.get(indexBachecaStart).toDoList.remove(indexToDoStart);
     }
-    public void completeToDo(){
+
+    public Boolean searchToDo(String titoloToDo){
+
+        for(int i = 0; i < bacheche.size(); i++){
+            for(ToDo toDoTemp : bacheche.get(i).toDoList){
+                if(titoloToDo.equals(toDoTemp.titolo))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+    public void completeToDo(int indexBacheca, int indexToDo){
+        bacheche.get(indexBacheca).toDoList.get(indexToDo).completato = true;
 
     }
 }

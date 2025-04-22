@@ -9,9 +9,9 @@ public class ToDo {
     String URL;
     String descrizione;
     Image Immagine;
-    Autore autore;
+    String autore;
     Boolean completato = false;
-    Scanner scanner= new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in);
 
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
     ArrayList<String> utentiAssociati = new ArrayList<String>();
@@ -20,24 +20,43 @@ public class ToDo {
         titolo = titoloIniziale;
         dataDiScadenza = data;
         descrizione = descrizioneIniziale;
-        autore.nomeUtente = utente.nome;
+        autore = utente.nome;
     }
 
     public ArrayList<String> getUtenti(){
         return utentiAssociati;
     }
-    public void visualizeDeadline(){
+
+    public Date visualizeDeadline(){
+        return dataDiScadenza;
+    }
+
+    public void modifyToDo(String nuovoTitolo, Date nuovaData, String nuovaDescrizione, String nomeUtente){
+
+       if(!utentiAssociati.contains(nomeUtente))
+           return;
+
+        if(!nuovoTitolo.isEmpty())
+            this.titolo = nuovoTitolo;
+
+        if(!nuovaDescrizione.isEmpty())
+            this.descrizione=nuovaDescrizione;
+
+        this.dataDiScadenza=nuovaData;
 
     }
-    public void modifyToDo( String nuovoTitolo, Date nuovaData, String nuovaDescrizione, Autore nuovoAutore){
-        if(nuovoTitolo != null)
-            this.titolo=nuovoTitolo;
-        if(nuovaData != null)
-            this.dataDiScadenza=nuovaData;
-        if(nuovaDescrizione != null)
-            this.descrizione=nuovaDescrizione;
-        if(nuovoAutore != null)
-            this.autore=nuovoAutore;
+
+    public void grantPermission(String nomeUtente, String nuovoUtente){
+        if(nomeUtente.equals(autore))
+            utentiAssociati.add(nuovoUtente);
+
     }
+
+    public void revokePermission(String nomeUtente, String deleteUtente){
+        if(nomeUtente.equals(autore))
+            utentiAssociati.remove(deleteUtente);
+
+    }
+
 }
 

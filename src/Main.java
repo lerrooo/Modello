@@ -19,6 +19,7 @@ public class Main {
         System.out.print("Inserisci il nome utente: ");
         nomeTemp = input.nextLine();
 
+
         System.out.print("Inserisci la password:");
         passwordTemp = input.nextLine();
         Utente nuovoUtente= new Utente(nomeTemp,passwordTemp);

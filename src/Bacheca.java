@@ -1,11 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-
-enum titoloBacheca{
-    universita,
-    lavoro,
-    tempoLibero
-}
 
 public class Bacheca {
     ArrayList<ToDo> toDoList = new ArrayList<ToDo>();
@@ -22,22 +17,24 @@ public class Bacheca {
     public void createToDo(String titoloToDo, Date dataToDo, String descrizioneToDo, Utente utente){
         toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
     }
-    public void modifyBacheca(String nuovoTitolo, String nuovaDescrizione, titoloBacheca nuovotitoloBacheca){
-    if(nuovotitoloBacheca != null)
-        this.titolo=nuovoTitolo;
-    if(nuovaDescrizione != null)
-        this.descrizione=nuovaDescrizione;
-    if(nuovotitoloBacheca != null)
-        this.tipoBacheca=nuovotitoloBacheca;
+
+    public void deleteToDo(int index){
+        toDoList.remove(index);
     }
-    public void deleteToDo(){
+
+    public void modifyBacheca(String nuovoTitolo, String nuovaDescrizione, titoloBacheca nuovoTipoBacheca){
+
+    if(!nuovoTitolo.isEmpty())
+        this.titolo = nuovoTitolo;
+    if(!nuovaDescrizione.isEmpty())
+        this.descrizione = nuovaDescrizione;
+
+    this.tipoBacheca = nuovoTipoBacheca;
 
     }
 
-    public void changePositionToDo(){
-
-    }
-    public void swapToDo(){
+    public void swapToDo(int indexToDoFirst, int indexToDoSecond){
+        Collections.swap(toDoList, indexToDoFirst, indexToDoSecond);
 
     }
 
