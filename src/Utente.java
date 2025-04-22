@@ -18,11 +18,12 @@ public class Utente {
             System.out.println("Limite raggiunto");
     }
 
-    public void deleteBacheca(boolean confermaEliminazione, int indiceDaEliminare){
+    public void deleteBacheca(Boolean confermaEliminazione, int indiceDaEliminare){
         if(confermaEliminazione){
-            if(indiceDaEliminare>=0 && indiceDaEliminare<3){
-            bacheche.remove(indiceDaEliminare);
-            System.out.println("..elemento eliminato..");
+            if(indiceDaEliminare >= 0 && indiceDaEliminare < 3){
+                bacheche.remove(indiceDaEliminare);
+                System.out.println("..elemento eliminato..");
+
             }else
                 System.out.println("..elemento non trovato..");
         }
@@ -37,9 +38,9 @@ public class Utente {
 
     public Boolean searchToDo(String titoloToDo){
 
-        for(int i = 0; i < bacheche.size(); i++){
-            for(ToDo toDoTemp : bacheche.get(i).toDoList){
-                if(titoloToDo.equals(toDoTemp.titolo))
+        for (Bacheca bacheca : bacheche) {
+            for (ToDo toDoTemp : bacheca.toDoList) {
+                if (titoloToDo.equals(toDoTemp.titolo))
                     return true;
             }
         }
