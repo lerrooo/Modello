@@ -37,7 +37,37 @@ public class Main {
 
         if(utenteLoggato != null){
             System.out.println("Benvenuto " + utenteLoggato.nome);
-            stampaBacheche(utenteLoggato);
+
+            do {
+                System.out.println("\nquale opzione scegli? :" +
+                        "\n0. Stampa bacheche" +
+                        "\n1. Crea bacheca" +
+                        "\n2. Elimina bacheca" +
+                        "\n3. Cambia posizione ToDo" +
+                        "\n4. Cerca ToDo" +
+                        "\n5. Completa ToDo" +
+                        "\n6. Esci dal programma"
+                );
+                input = new Scanner(System.in);
+                sceltaOpzioni = input.nextInt();
+                input.nextLine();
+
+                switch (sceltaOpzioni) {
+                    case 0:
+                        stampaBacheche(utenteLoggato);
+                        break;
+                    case 1:
+                        aggiungiBacheca(utenteLoggato);
+                        break;
+                    case 2:
+                        System.out.println("Uscita dal programma");
+                        break;
+
+                    default:
+                        System.out.println("inserisci il numero corretto");
+                        break;
+                }
+            } while (sceltaOpzioni != 6);
         }
 
     }
@@ -88,4 +118,44 @@ public class Main {
 
         }
   }
+
+  private static void aggiungiBacheca(Utente utenteLoggato){
+        if(utenteLoggato.bacheche.size() < 3){
+            Scanner input = new Scanner(System.in);
+
+            System.out.println("Inserisci il nome della bacheca");
+            String nomeTemp = input.nextLine();
+
+            System.out.println("Inserisci la descrizione della bacheca");
+            String descTemp = input.nextLine();
+
+            System.out.println("Inserisci la tipologia di bacheca + " +
+                    "\n1. Università" +
+                    "\n2. Lavoro" +
+                    "\n3. Tempo libero"
+            );
+            int scelta = input.nextInt();
+            titoloBacheca titoloTemp = null;
+            switch (scelta){
+                case 1:
+                    titoloTemp = titoloBacheca.universita;
+                    break;
+                case 2:
+                    titoloTemp = titoloBacheca.lavoro;
+                    break;
+                case 3:
+                    titoloTemp = titoloBacheca.tempoLibero;
+                    break;
+                default:
+                    System.out.println("Numero inserito non corretto");
+                    break;
+            }
+        
+            utenteLoggato.createBacheca(nomeTemp, descTemp, titoloTemp);
+            
+        }else
+            System.out.println("Limite raggiunto");
+
+  }
+
 }

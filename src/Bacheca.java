@@ -9,9 +9,10 @@ public class Bacheca {
     String descrizione;
     titoloBacheca tipoBacheca;
 
-
-    Bacheca(String titoloInserimento){
+    Bacheca(String titoloInserimento, String descrizioneInserimento, titoloBacheca tipoInserimento){
         titolo = titoloInserimento;
+        descrizione = descrizioneInserimento;
+        tipoBacheca = tipoInserimento;
     }
 
     public void createToDo(String titoloToDo, Date dataToDo, String descrizioneToDo, Utente utente){

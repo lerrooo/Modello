@@ -10,29 +10,27 @@ public class Utente {
         nome = nomeRegistrazione;
         password = passwordRegistrazione;
 
-        bacheche.add(new Bacheca("Università"));
-        bacheche.add(new Bacheca("Lavoro"));
-        bacheche.add(new Bacheca("Tempo libero"));
+        bacheche.add(new Bacheca("Università", "Bacheca università", titoloBacheca.universita));
+        bacheche.add(new Bacheca("Lavoro", "Bacheca lavoro", titoloBacheca.lavoro));
+        //bacheche.add(new Bacheca("Tempo libero", "Bacheca tempo libero", titoloBacheca.tempoLibero));
 
     }
 
-    public void createBacheca(String titoloBacheca){
+    public void createBacheca(String titoloBacheca, String descrizioneBacheca, titoloBacheca tipoBacheca){
         if(bacheche.size() < 3)
-            bacheche.add(new Bacheca(titoloBacheca));
+            bacheche.add(new Bacheca(titoloBacheca, descrizioneBacheca, tipoBacheca));
         else
             System.out.println("Limite raggiunto");
     }
 
-    public void deleteBacheca(Boolean confermaEliminazione, int indiceDaEliminare){
-        if(confermaEliminazione){
-            if(indiceDaEliminare >= 0 && indiceDaEliminare < 3){
-                bacheche.remove(indiceDaEliminare);
-                System.out.println("..elemento eliminato..");
-            }else
-                System.out.println("..elemento non trovato..");
-        }
-        else
-            System.out.println("..non è possibile fare l'eliminazione..");
+    public void deleteBacheca(int indiceDaEliminare){
+
+        if(indiceDaEliminare >= 0 && indiceDaEliminare < 3){
+            bacheche.remove(indiceDaEliminare);
+            System.out.println("..elemento eliminato..");
+        }else
+            System.out.println("..elemento non trovato..");
+
     }
 
     public void changePositionToDo(int indexBachecaStart, int indexBachecaEnd, int indexToDoStart, int indexToDoEnd){
