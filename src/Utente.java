@@ -9,6 +9,11 @@ public class Utente {
     Utente(String nomeRegistrazione, String passwordRegistrazione){
         nome = nomeRegistrazione;
         password = passwordRegistrazione;
+
+        bacheche.add(new Bacheca("Università"));
+        bacheche.add(new Bacheca("Lavoro"));
+        bacheche.add(new Bacheca("Tempo libero"));
+
     }
 
     public void createBacheca(String titoloBacheca){

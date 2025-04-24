@@ -5,7 +5,7 @@ import java.util.Date;
 public class Main {
     public static void main(String[] args) {
         ArrayList<Utente> utenti = new ArrayList<Utente>();
-        Utente utenteLoggato;
+        Utente utenteLoggato = null;
         Scanner input;
         int sceltaOpzioni;
 
@@ -21,7 +21,6 @@ public class Main {
             switch (sceltaOpzioni) {
                 case 0:
                     utenteLoggato = loginUtente(utenti);
-                    System.out.println(utenteLoggato.nome);
                     break;
                 case 1:
                     registraUtente(utenti);
@@ -34,7 +33,13 @@ public class Main {
                     System.out.println("inserisci il numero corretto");
                     break;
             }
-        } while (sceltaOpzioni != 2);
+        } while (sceltaOpzioni != 2 && utenteLoggato == null);
+
+        if(utenteLoggato != null){
+            System.out.println("Benvenuto " + utenteLoggato.nome);
+            stampaBacheche(utenteLoggato);
+        }
+
     }
 
     public static void registraUtente(ArrayList<Utente> utenti){
@@ -73,4 +78,14 @@ public class Main {
         return null;
   }
 
+  private static void stampaBacheche(Utente utente){
+        for(Bacheca tempBacheca : utente.bacheche){
+            System.out.println("Nome bacheca: " + tempBacheca.titolo + "\nDescrizione bacheca: " + tempBacheca.descrizione);
+
+            for(ToDo tempToDo : tempBacheca.toDoList){
+                System.out.println("Nome ToDo: " + tempToDo.titolo + " Descrizione: " + tempToDo.descrizione);
+            }
+
+        }
+  }
 }
