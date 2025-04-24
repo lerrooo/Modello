@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,7 +16,7 @@ public class Bacheca {
         tipoBacheca = tipoInserimento;
     }
 
-    public void createToDo(String titoloToDo, Date dataToDo, String descrizioneToDo, Utente utente){
+    public void createToDo(String titoloToDo, LocalDate dataToDo, String descrizioneToDo, Utente utente){
         toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
     }
 

@@ -1,11 +1,12 @@
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
 public class ToDo {
     String titolo;
-    Date dataDiScadenza;
+    LocalDate dataDiScadenza;
     String URL;
     String descrizione;
     Image Immagine;
@@ -16,7 +17,7 @@ public class ToDo {
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
     ArrayList<String> utentiAssociati = new ArrayList<String>();
 
-    ToDo(String titoloIniziale, Date data, String descrizioneIniziale, Utente utente){
+    ToDo(String titoloIniziale, LocalDate data, String descrizioneIniziale, Utente utente){
         titolo = titoloIniziale;
         dataDiScadenza = data;
         descrizione = descrizioneIniziale;
@@ -27,11 +28,11 @@ public class ToDo {
         return utentiAssociati;
     }
 
-    public Date visualizeDeadline(){
+    public LocalDate visualizeDeadline(){
         return dataDiScadenza;
     }
 
-    public void modifyToDo(String nuovoTitolo, Date nuovaData, String nuovaDescrizione, String nomeUtente){
+    public void modifyToDo(String nuovoTitolo, LocalDate nuovaData, String nuovaDescrizione, String nomeUtente){
 
        if(!utentiAssociati.contains(nomeUtente))
            return;
@@ -42,7 +43,7 @@ public class ToDo {
         if(!nuovaDescrizione.isEmpty())
             this.descrizione=nuovaDescrizione;
 
-        this.dataDiScadenza=nuovaData;
+        this.dataDiScadenza = nuovaData;
 
     }
 
