@@ -2,23 +2,24 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Date;
+
 
 public class Main {
     public static void main(String[] args) {
         ArrayList<Utente> utenti = new ArrayList<Utente>();
         Utente utenteLoggato = null;
         Scanner input;
-        int sceltaOpzioni;
+        int sceltaOpzioni=-1;
 
-        do {
-            System.out.println("\nquale opzione scegli? :" +
-                    "\n0:login:" +
-                    "\n1.registrazione"
-            );
-            input = new Scanner(System.in);
-            sceltaOpzioni = input.nextInt();
-            input.nextLine();
+        do {  try{
+
+                System.out.println("\nquale opzione scegli? :" +
+                        "\n0:login:" +
+                        "\n1.registrazione"
+                );
+                input = new Scanner(System.in);
+                sceltaOpzioni = input.nextInt();
+                input.nextLine();
 
             switch (sceltaOpzioni) {
                 case 0:
@@ -35,12 +36,17 @@ public class Main {
                     System.out.println("inserisci il numero corretto");
                     break;
             }
+          } catch(Exception e){
+                System.out.println("inserisci un numero valido");
+            }
         } while (sceltaOpzioni != 2 && utenteLoggato == null);
+
+
 
         if(utenteLoggato != null){
             System.out.println("Benvenuto " + utenteLoggato.nome);
 
-            do {
+            do { try{
                 System.out.println("\nquale opzione scegli? :" +
                         "\n0. Stampa bacheche" +
                         "\n1. Crea bacheca" +
@@ -84,14 +90,30 @@ public class Main {
                     case 7:
                         cambiaPosizioneToDo(utenteLoggato);
                         break;
+                    case 8:
+                        swapPosizioneToDo(utenteLoggato);
+                        break;
+                    case 9:
+                        completaToDo(utenteLoggato);
+                        break;
+                    case 10:
+                        cercaToDo(utenteLoggato);
+                        break;
                     default:
                         System.out.println("inserisci il numero corretto");
                         break;
                 }
+             }
+             catch(Exception e){
+                System.out.println("inserisci un numero valido");
+             }
             } while (sceltaOpzioni != 6);
+
+
+            }
+
         }
 
-    }
   public static void registraUtente(ArrayList<Utente> utenti){
         Scanner input = new Scanner(System.in);
 
@@ -133,7 +155,10 @@ public class Main {
             System.out.println("Nome bacheca: " + tempBacheca.titolo + "\nDescrizione bacheca: " + tempBacheca.descrizione);
 
             for(ToDo tempToDo : tempBacheca.toDoList){
-                System.out.println("Nome ToDo: " + tempToDo.titolo + " Descrizione: " + tempToDo.descrizione);
+                System.out.printf("Nome ToDo: " + tempToDo.titolo + " Descrizione: " + tempToDo.descrizione + " stato:");
+                if(tempToDo.completato)
+                    System.out.println(" completato");
+                else System.out.println("non completato");
             }
 
         }
@@ -316,26 +341,99 @@ public class Main {
       Scanner input = new Scanner(System.in);
       System.out.println("Inserire il nome del ToDo:");
       String nomeToDo = input.nextLine();
-      ToDo tempToDo = null;
-      for(Bacheca bachecaTemp : utenteLoggato.bacheche){
-          for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
-              if(bachecaTemp.toDoList.get(i).titolo.equals(nomeToDo)){
-                  tempToDo = bachecaTemp.toDoList.get(i);
+      int indexBachecaStart = -1;
+      int indexToDoStart = -1;
+      int indexBachecaEnd;
+      int indexToDoEnd;
+
+      for(int j = 0; j < utenteLoggato.bacheche.size(); j++ ){
+          for(int i = 0; i < utenteLoggato.bacheche.get(j).toDoList.size(); i++){
+              if(utenteLoggato.bacheche.get(j).toDoList.get(i).titolo.equals(nomeToDo)){
+                  indexBachecaStart = j;
+                  indexToDoStart = i;
+                  System.out.println("indice bacheca:" + indexBachecaStart + "\n indice ToDo:" + indexToDoStart );
               }
           }
       }
-      if(tempToDo != null){
+      if(indexBachecaStart != -1){
 
-          System.out.println("");
-
+          System.out.println("in che bacheca vuoi spostare il ToDo? : ");
+          indexBachecaEnd=input.nextInt();
+          input.nextLine();
+          System.out.println("in che posizione della bacheca vuoi spostare il ToDo? : ");
+          indexToDoEnd=input.nextInt();
+          input.nextLine();
+          utenteLoggato.changePositionToDo(indexBachecaStart, indexBachecaEnd, indexToDoStart, indexToDoEnd);
 
       }else System.out.println("- ToDo non trovato -");
 
-
-
-
-
-
   }
+    private static void swapPosizioneToDo(Utente utenteLoggato){
+        int indexToDoStart=-1;
+        int indexToDoEnd=-1;
+        String nomeTemp;
+
+        Scanner input = new Scanner(System.in);
+        System.out.println("Inserisci il numero della bacheca:");
+        for(int i = 0; i < utenteLoggato.bacheche.size(); i++){
+            System.out.println(i + ". " + utenteLoggato.bacheche.get(i).titolo);
+        }
+        int scelta = input.nextInt();
+        input.nextLine();
+        Bacheca bachecaTemp = utenteLoggato.bacheche.get(scelta);
+        System.out.println("Inserisci il nome del primo ToDo:");
+        nomeTemp = input.nextLine();
+        for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
+            if(bachecaTemp.toDoList.get(i).titolo.equals(nomeTemp)){
+                indexToDoStart = i;
+            }
+        }
+        if(indexToDoStart == -1)
+            return;
+        System.out.println("Inserisci il nome del secondo ToDo:");
+        nomeTemp = input.nextLine();
+        for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
+            if(bachecaTemp.toDoList.get(i).titolo.equals(nomeTemp)){
+                indexToDoEnd= i;
+            }
+        }
+        if(indexToDoEnd == -1)
+            return;
+        bachecaTemp.swapToDo(indexToDoStart,indexToDoEnd);
+
+   };
+    private static void completaToDo(Utente utenteLoggato){
+        int indexBacheca;
+        int indexToDo=-1;
+        String nomeTemp;
+        Scanner input = new Scanner(System.in);
+        System.out.println("Inserisci il numero della bacheca:");
+        for(int i = 0; i < utenteLoggato.bacheche.size(); i++){
+            System.out.println(i + ". " + utenteLoggato.bacheche.get(i).titolo);
+        }
+        int scelta = input.nextInt();
+        input.nextLine();
+        Bacheca bachecaTemp = utenteLoggato.bacheche.get(scelta);
+
+        System.out.println("Inserisci il nome del ToDo:");
+        nomeTemp = input.nextLine();
+        for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
+            if(bachecaTemp.toDoList.get(i).titolo.equals(nomeTemp)){
+                indexToDo = i;
+            }
+        }
+        if(indexToDo == -1)
+            return;
+        utenteLoggato.completeToDo(scelta,indexToDo);
+    }
+    private static void cercaToDo(Utente utenteLoggato){
+        String nomeToDo;
+        Scanner input = new Scanner(System.in);
+        System.out.println("Inserisci il nome del ToDo:");
+        nomeToDo= input.nextLine();
+        if(utenteLoggato.searchToDo(nomeToDo))
+            System.out.println("ToDo trovato");
+        else System.out.println("ToDo non trovato");
+    };
 
 }
