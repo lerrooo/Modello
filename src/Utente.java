@@ -12,7 +12,7 @@ public class Utente {
 
         bacheche.add(new Bacheca("Università", "Bacheca università", titoloBacheca.universita));
         bacheche.add(new Bacheca("Lavoro", "Bacheca lavoro", titoloBacheca.lavoro));
-        //bacheche.add(new Bacheca("Tempo libero", "Bacheca tempo libero", titoloBacheca.tempoLibero));
+        bacheche.add(new Bacheca("Tempo libero", "Bacheca tempo libero", titoloBacheca.tempoLibero));
 
     }
 

@@ -152,10 +152,10 @@ public class Main {
 
   private static void stampaBacheche(Utente utente){
         for(Bacheca tempBacheca : utente.bacheche){
-            System.out.println("Nome bacheca: " + tempBacheca.titolo + "\nDescrizione bacheca: " + tempBacheca.descrizione);
+            System.out.println("\nNOME BACHECA: " + tempBacheca.titolo + "\nDescrizione bacheca: " + tempBacheca.descrizione);
 
             for(ToDo tempToDo : tempBacheca.toDoList){
-                System.out.printf("Nome ToDo: " + tempToDo.titolo + " Descrizione: " + tempToDo.descrizione + " stato:");
+                System.out.printf("\nNOME TODO: " + tempToDo.titolo + " \nDescrizione: " + tempToDo.descrizione + "\nstato:");
                 if(tempToDo.completato)
                     System.out.println(" completato");
                 else System.out.println("non completato");
