@@ -20,7 +20,8 @@ public class Main {
 
             switch (sceltaOpzioni) {
                 case 0:
-
+                    utenteLoggato = loginUtente(utenti);
+                    System.out.println(utenteLoggato.nome);
                     break;
                 case 1:
                     registraUtente(utenti);
@@ -51,4 +52,25 @@ public class Main {
         Utente nuovoUtente = new Utente(nomeTemp,passwordTemp);
         utenti.add(nuovoUtente);
   }
+
+  private static Utente loginUtente(ArrayList<Utente> utenti){
+
+      Scanner input = new Scanner(System.in);
+
+      String nomeLogin;
+      String passwordLogin;
+
+      System.out.print("Inserisci il nome utente: ");
+      nomeLogin = input.nextLine();
+
+      System.out.print("Inserisci la password:");
+      passwordLogin = input.nextLine();
+
+        for (Utente utenteTemp : utenti){
+            if(utenteTemp.nome.equals(nomeLogin) && utenteTemp.password.equals(passwordLogin))
+                return utenteTemp;
+        }
+        return null;
+  }
+
 }
