@@ -38,15 +38,15 @@ public class Utente {
         bacheche.get(indexBachecaStart).toDoList.remove(indexToDoStart);
     }
 
-    public Boolean searchToDo(String titoloToDo){
+    public ToDo searchToDo(String titoloToDo){
 
         for (Bacheca bacheca : bacheche) {
             for (ToDo toDoTemp : bacheca.toDoList) {
                 if (titoloToDo.equals(toDoTemp.titolo))
-                    return true;
+                    return toDoTemp;
             }
         }
-        return false;
+        return null;
     }
     public void completeToDo(int indexBacheca, int indexToDo){
         bacheche.get(indexBacheca).toDoList.get(indexToDo).completato = true;

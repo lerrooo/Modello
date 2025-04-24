@@ -430,9 +430,13 @@ public class Main {
         String nomeToDo;
         Scanner input = new Scanner(System.in);
         System.out.println("Inserisci il nome del ToDo:");
-        nomeToDo= input.nextLine();
-        if(utenteLoggato.searchToDo(nomeToDo))
-            System.out.println("ToDo trovato");
+        nomeToDo = input.nextLine();
+
+        ToDo toDoTemp = utenteLoggato.searchToDo(nomeToDo);
+
+        if(toDoTemp != null)
+            System.out.println("ToDo trovato - con scadenza il: " + toDoTemp.visualizeDeadline());
+
         else System.out.println("ToDo non trovato");
     };
 
