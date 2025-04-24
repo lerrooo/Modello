@@ -78,6 +78,12 @@ public class Main {
                     case 5:
                         eliminaToDo(utenteLoggato);
                         break;
+                    case 6:
+                        modificaToDo(utenteLoggato);
+                        break;
+                    case 7:
+                        cambiaPosizioneToDo(utenteLoggato);
+                        break;
                     default:
                         System.out.println("inserisci il numero corretto");
                         break;
@@ -272,6 +278,63 @@ public class Main {
 
             }
         }
+
+  }
+  private static void modificaToDo(Utente utenteLoggato){
+      String titoloTemp;
+      String descrizioneTemp;
+
+      Scanner input = new Scanner(System.in);
+
+      System.out.println("Inserisci il nome del ToDo da modificare");
+      String nomeToDo = input.nextLine();
+      ToDo tempToDo = null;
+      for(Bacheca bachecaTemp : utenteLoggato.bacheche){
+          for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
+              if(bachecaTemp.toDoList.get(i).titolo.equals(nomeToDo)){
+                  tempToDo = bachecaTemp.toDoList.get(i);
+              }
+          }
+      }
+      if(tempToDo != null){
+          System.out.println("inserisci il nuovo nome:");
+          titoloTemp = input.nextLine();
+          System.out.println("inserisci la nuova descrizione:");
+          descrizioneTemp = input.nextLine();
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+          //Data temporanea non da input
+          LocalDate dataTemp = LocalDate.parse("01/01/2000", formatter);
+          tempToDo.modifyToDo(titoloTemp, dataTemp, descrizioneTemp, utenteLoggato.nome);
+
+      }else System.out.println("- ToDo non trovato -");
+
+
+
+
+  }
+  private static void cambiaPosizioneToDo(Utente utenteLoggato){
+      Scanner input = new Scanner(System.in);
+      System.out.println("Inserire il nome del ToDo:");
+      String nomeToDo = input.nextLine();
+      ToDo tempToDo = null;
+      for(Bacheca bachecaTemp : utenteLoggato.bacheche){
+          for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
+              if(bachecaTemp.toDoList.get(i).titolo.equals(nomeToDo)){
+                  tempToDo = bachecaTemp.toDoList.get(i);
+              }
+          }
+      }
+      if(tempToDo != null){
+
+          System.out.println("");
+
+
+      }else System.out.println("- ToDo non trovato -");
+
+
+
+
+
 
   }
 
