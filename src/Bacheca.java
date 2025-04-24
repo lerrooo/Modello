@@ -28,14 +28,11 @@ public class Bacheca {
         this.titolo = nuovoTitolo;
     if(!nuovaDescrizione.isEmpty())
         this.descrizione = nuovaDescrizione;
-
     this.tipoBacheca = nuovoTipoBacheca;
-
     }
 
     public void swapToDo(int indexToDoFirst, int indexToDoSecond){
         Collections.swap(toDoList, indexToDoFirst, indexToDoSecond);
-
     }
 
 

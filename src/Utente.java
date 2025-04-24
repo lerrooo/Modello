@@ -23,7 +23,6 @@ public class Utente {
             if(indiceDaEliminare >= 0 && indiceDaEliminare < 3){
                 bacheche.remove(indiceDaEliminare);
                 System.out.println("..elemento eliminato..");
-
             }else
                 System.out.println("..elemento non trovato..");
         }
@@ -44,11 +43,9 @@ public class Utente {
                     return true;
             }
         }
-
         return false;
     }
     public void completeToDo(int indexBacheca, int indexToDo){
         bacheche.get(indexBacheca).toDoList.get(indexToDo).completato = true;
-
     }
 }

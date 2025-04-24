@@ -49,7 +49,6 @@ public class ToDo {
     public void grantPermission(String nomeUtente, String nuovoUtente){
         if(nomeUtente.equals(autore))
             utentiAssociati.add(nuovoUtente);
-
     }
 
     public void revokePermission(String nomeUtente, String deleteUtente){
