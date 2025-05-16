@@ -39,7 +39,6 @@ public class Utente {
     }
 
     public ToDo searchToDo(String titoloToDo){
-
         for (Bacheca bacheca : bacheche) {
             for (ToDo toDoTemp : bacheca.toDoList) {
                 if (titoloToDo.equals(toDoTemp.titolo))
@@ -48,7 +47,9 @@ public class Utente {
         }
         return null;
     }
+
     public void completeToDo(int indexBacheca, int indexToDo){
         bacheche.get(indexBacheca).toDoList.get(indexToDo).completato = true;
+
     }
 }
