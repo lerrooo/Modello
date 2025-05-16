@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Login {
-    //SWING UI
+//SWING UI
     public MainGUI MainGUI;
     private static JFrame mainFrame;
     private JPanel LoginPanel;
@@ -16,21 +16,17 @@ public class Login {
     private JButton accediButton;
     private JButton registratiButton;
 
-    //store users
+//store users
     ArrayList<Utente> utenti = new ArrayList<Utente>();
     Utente utenteLoggato = null;
 
-
     public static void main(String[] args) {
-
-
         JFrame frame = new JFrame("MainGUI");
         frame.setContentPane(new Login().LoginPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
-        mainFrame = frame;
+         mainFrame = frame;
     }
     public Login() {
         accediButton.addActionListener(new ActionListener() {
@@ -40,14 +36,13 @@ public class Login {
                     MainGUI secondaGUI = new MainGUI(mainFrame);
                     secondaGUI.frame.setVisible(true);
                     mainFrame.setVisible(false);
-
-                    System.out.println("utente trovato");
+                 System.out.println("utente trovato");
                 }else {
                     System.out.println("utente non trovato");
                 }
-
             }
         });
+
         registratiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,11 +52,8 @@ public class Login {
             }
         });
     }
-
     private static Utente loginUtente(ArrayList<Utente> utenti, String NomeUtente, char[] Password){
-
         String passwordString = new String(Password);
-
         for (Utente utenteTemp : utenti){
             if(utenteTemp.nome.equals(NomeUtente) && utenteTemp.password.equals(passwordString))
                 return utenteTemp;

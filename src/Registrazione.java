@@ -7,7 +7,6 @@ import java.util.Scanner;
 public class Registrazione {
 
     private ArrayList<Utente> utentiTemp;
-
     private JFrame frameLogin;
     private JPanel RegistrazionePanel;
     private JTextField textField1;
@@ -22,37 +21,39 @@ public class Registrazione {
         frame.pack();
         frame.setVisible(true);
     }
+    public Registrazione(){}
+        public Registrazione(JFrame frameChiamante, ArrayList < Utente > utenti){
+            frameLogin = frameChiamante;
+            utentiTemp = utenti;
+            regFrame = new JFrame("Registrazione");
+            regFrame.setContentPane(RegistrazionePanel);
+            regFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            regFrame.pack();
+            regFrame.setVisible(true);
 
-    public Registrazione(){
+            button1.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String nome = textField1.getText();
+                    char[] passchars = passwordField1.getPassword();
+                    String password = new String(passchars);
+                    if (!nome.trim().isEmpty() && passchars.length > 0) {
+                        registraUtente(nome, passchars);
+                        JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                        regFrame.dispose();
+                        frameLogin.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "Errore di Registrazione", JOptionPane.ERROR_MESSAGE);
+                    }
 
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("asdasd");
-                registraUtente(textField1.toString(), passwordField1.getPassword());
-                frameLogin.setVisible(true);
-                regFrame.setVisible(false);
-
+                }
+            });
+    }
+        private void registraUtente (String nomeTemp,char[] Password){
+            String passwordTemp = new String(Password);
+            if (!nomeTemp.trim().isEmpty() && passwordTemp.length()>0) {
+                Utente nuovoUtente = new Utente(nomeTemp, passwordTemp);
+                utentiTemp.add(nuovoUtente);
             }
-        });
-    }
-    public Registrazione(JFrame frameChiamante, ArrayList<Utente> utenti) {
-        frameLogin = frameChiamante;
-        utentiTemp = utenti;
-        regFrame = new JFrame("Registrazione");
-        regFrame.setContentPane(RegistrazionePanel);
-        regFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        regFrame.pack();
-        regFrame.setVisible(true);
-
-    }
-
-    private void registraUtente(String nomeTemp, char[] Password){
-        String passwordTemp = new String(Password);
-        if(!nomeTemp.isEmpty() && !passwordTemp.isEmpty()){
-            Utente nuovoUtente = new Utente(nomeTemp,passwordTemp);
-            utentiTemp.add(nuovoUtente);
         }
-
     }
-}
