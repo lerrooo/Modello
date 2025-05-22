@@ -1,21 +1,15 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 public class Login {
-//SWING UI
     private static JFrame mainFrame;
     private JPanel LoginPanel;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton accediButton;
     private JButton registratiButton;
-
-//store users
     ArrayList<Utente> utenti = new ArrayList<Utente>();
     Utente utenteLoggato = null;
 
@@ -51,7 +45,6 @@ public class Login {
                 }
             }
         });
-
         registratiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

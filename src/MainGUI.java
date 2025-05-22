@@ -1,26 +1,21 @@
-import javax.lang.model.type.ArrayType;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.random.RandomGenerator;
 
 public class MainGUI {
     private JPanel MainGUIPanel;
     private JButton addTodo1;
     private JPanel JPanelTodo1;
-    public JFrame frame;
+    public static JFrame frame;
 
     static private Utente utenteLoggato = null;
 
     static ArrayList<JPanel> BachecheJPanel = new ArrayList<JPanel>();
     static ArrayList<JButton> ButtonsList = new ArrayList<JButton>();
     static ArrayList<JLabel> TitoliList = new ArrayList<JLabel>();
-
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Aggiungi Bottone sopra il +");
@@ -117,11 +112,26 @@ public class MainGUI {
                 String descTemp = JOptionPane.showInputDialog(null, "Inserire descrizione ToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
 
                 JButton newButton = new JButton(nomeTemp);
+                newButton.setBackground(Color.white);
+                newButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        int indexBacheca = BachecheJPanel.indexOf(newButton.getParent());
+                        ToDo tempToDo = utenteLoggato.bacheche.get(indexBacheca).toDoList.get(Integer.parseInt(newButton.getToolTipText()) - 1);
+                        ToDoGUI guiToDo = new ToDoGUI(newButton, tempToDo);
+                        ToDoGUI.frameTodo.setVisible(true);
+                    }
+                });
+
                 ButtonsList.add(newButton);
 
                 ToDo tempToDo = new ToDo(nomeTemp, LocalDate.now(), descTemp, utenteLoggato);
                 panel.add(newButton, 1);
+                int indexBacheca = BachecheJPanel.indexOf(newButton.getParent());
+                utenteLoggato.bacheche.get(indexBacheca).toDoList.add(tempToDo);
 
+                newButton.setToolTipText(String.valueOf(utenteLoggato.bacheche.get(indexBacheca).toDoList.size()));
                 resizeLayout();
             }
         });

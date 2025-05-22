@@ -1,7 +1,6 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 public class Bacheca {
     ArrayList<ToDo> toDoList = new ArrayList<ToDo>();
