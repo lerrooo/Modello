@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 public class Login {
 //SWING UI
-    public MainGUI MainGUI;
     private static JFrame mainFrame;
     private JPanel LoginPanel;
     private JTextField textField1;
@@ -26,19 +25,29 @@ public class Login {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-         mainFrame = frame;
+        frame.setSize(500, 300);
+        mainFrame = frame;
     }
     public Login() {
         accediButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(loginUtente(utenti, textField1.getText(), passwordField1.getPassword()) != null){
-                    MainGUI secondaGUI = new MainGUI(mainFrame);
-                    secondaGUI.frame.setVisible(true);
+
+                if(textField1.getText().isEmpty() || passwordField1.getPassword().length == 0){
+                    JOptionPane.showMessageDialog(mainFrame, "Inserisci nome utente e password", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                utenteLoggato = loginUtente(utenti, textField1.getText(), passwordField1.getPassword());
+
+                if(utenteLoggato != null){
+                    MainGUI mainGuiAfterLogin = new MainGUI(mainFrame, utenteLoggato);
                     mainFrame.setVisible(false);
+                    mainFrame.dispose();
+
                  System.out.println("utente trovato");
                 }else {
-                    System.out.println("utente non trovato");
+                    JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });

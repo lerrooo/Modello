@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Registrazione {
 
@@ -11,18 +10,22 @@ public class Registrazione {
     private JPanel RegistrazionePanel;
     private JTextField textField1;
     private JPasswordField passwordField1;
-    private JButton button1;
+    private JPasswordField passwordField2;
+    private JButton OK;
+
     JFrame regFrame;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("MainGUI");
+        JFrame frame = new JFrame("Registrazione");
         frame.setContentPane(new Registrazione().RegistrazionePanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
     public Registrazione(){}
-        public Registrazione(JFrame frameChiamante, ArrayList < Utente > utenti){
+
+    public Registrazione(JFrame frameChiamante, ArrayList<Utente> utenti){
+
             frameLogin = frameChiamante;
             utentiTemp = utenti;
             regFrame = new JFrame("Registrazione");
@@ -31,29 +34,44 @@ public class Registrazione {
             regFrame.pack();
             regFrame.setVisible(true);
 
-            button1.addActionListener(new ActionListener() {
+
+            OK.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String nome = textField1.getText();
-                    char[] passchars = passwordField1.getPassword();
-                    String password = new String(passchars);
-                    if (!nome.trim().isEmpty() && passchars.length > 0) {
-                        registraUtente(nome, passchars);
-                        JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
-                        regFrame.dispose();
-                        frameLogin.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "Errore di Registrazione", JOptionPane.ERROR_MESSAGE);
-                    }
+                    String password = new String(passwordField1.getPassword());
+                    String confermaPassword = new String(passwordField2.getPassword());
 
+                    if (!nome.trim().isEmpty() && !password.isEmpty() && !confermaPassword.isEmpty()) {
+                        if (password.equals(confermaPassword)) {
+                            boolean registrato  = registraUtente(nome, password);
+                            if (registrato) {
+                                JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                                regFrame.dispose();
+                                frameLogin.setVisible(true);
+
+                            } else {
+                                JOptionPane.showMessageDialog(regFrame, "Utente già registrato", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);
+
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
+                    } else {
+                        JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "--Errore di Registrazione--", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
-            });
+            }
+            );
     }
-        private void registraUtente (String nomeTemp,char[] Password){
-            String passwordTemp = new String(Password);
-            if (!nomeTemp.trim().isEmpty() && passwordTemp.length()>0) {
+        private boolean registraUtente (String nomeTemp, String passwordTemp){
+
+            if (!nomeTemp.trim().isEmpty() && !passwordTemp.isEmpty()) {
                 Utente nuovoUtente = new Utente(nomeTemp, passwordTemp);
                 utentiTemp.add(nuovoUtente);
+                return true;
             }
+            return false;
         }
-    }
+
+
+}
