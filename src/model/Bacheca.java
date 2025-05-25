@@ -34,6 +34,15 @@ public class Bacheca {
     this.tipoBacheca = nuovoTipoBacheca;
     }
 
+    public int findToDoIndex(String titoloToDo){
+        for(int i = 0; i < toDoList.size(); i++){
+            if(toDoList.get(i).getTitolo().equals(titoloToDo)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void swapToDo(int indexToDoFirst, int indexToDoSecond){
         Collections.swap(toDoList, indexToDoFirst, indexToDoSecond);
     }

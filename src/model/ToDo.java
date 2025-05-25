@@ -33,6 +33,8 @@ public class ToDo {
         return dataDiScadenza;
     }
 
+    public String getTitolo(){return titolo;}
+
     public void modifyToDo(String nuovoTitolo, LocalDate nuovaData, String nuovaDescrizione, String nomeUtente){
 
        if(!utentiAssociati.contains(nomeUtente))
@@ -42,7 +44,7 @@ public class ToDo {
             this.titolo = nuovoTitolo;
 
         if(!nuovaDescrizione.isEmpty())
-            this.descrizione=nuovaDescrizione;
+            this.descrizione = nuovaDescrizione;
 
         this.dataDiScadenza = nuovaData;
 

@@ -3,9 +3,8 @@ package Controller;
 import model.Utente;
 import java.util.ArrayList;
 
-
 public class Controller {
-    private ArrayList<Utente> utenti = new ArrayList<Utente>();
+    private final ArrayList<Utente> utenti = new ArrayList<Utente>();
     private Utente utenteLoggato = null;
 
     public ArrayList<Utente> getUtenti(){
@@ -17,12 +16,14 @@ public class Controller {
     }
 
     public void setUtenteLoggato(Utente utente){
-        utenteLoggato =utente;
+        utenteLoggato = utente;
     }
 
     public void addUtente(Utente utente){
         utenti.add(utente);
     }
 
-
+    public Controller(){
+        addUtente(new Utente("a","a"));
+    }
 }

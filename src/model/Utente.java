@@ -11,9 +11,9 @@ public class Utente {
     public Utente(String nomeRegistrazione, String passwordRegistrazione){
         nome = nomeRegistrazione;
         password = passwordRegistrazione;
-        bacheche.add(new Bacheca("Università", "model.Bacheca università", titoloBacheca.universita));
-        bacheche.add(new Bacheca("Lavoro", "model.Bacheca lavoro", titoloBacheca.lavoro));
-        bacheche.add(new Bacheca("Tempo libero", "model.Bacheca tempo libero", titoloBacheca.tempoLibero));
+        bacheche.add(new Bacheca("Università", "Bacheca università", titoloBacheca.universita));
+        bacheche.add(new Bacheca("Lavoro", "Bacheca lavoro", titoloBacheca.lavoro));
+        bacheche.add(new Bacheca("Tempo libero", "Bacheca tempo libero", titoloBacheca.tempoLibero));
 
     }
     public void createBacheca(String titoloBacheca, String descrizioneBacheca, titoloBacheca tipoBacheca){

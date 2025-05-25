@@ -1,5 +1,6 @@
 package gui;
 
+import Controller.Controller;
 import model.ToDo;
 
 import javax.swing.*;
@@ -17,6 +18,8 @@ public class ToDoGUI {
     private JLabel todoLabel;
     private JButton modificaData;
     private JLabel dataLabel;
+    private JButton eliminaButton;
+    private JButton confermaButton;
     static JFrame frameTodo;
     Color coloreScelto;
 
@@ -25,17 +28,18 @@ public class ToDoGUI {
         frameTodo = frame;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
-        frame.setContentPane(new ToDoGUI(null, null).ToDoPanel);
+        frame.setContentPane(new ToDoGUI(null,null, null, null, 0,0).ToDoPanel);
         frame.setVisible(true);
         frame.setResizable(false);
     }
 
-    public ToDoGUI(JButton bottone, ToDo todoBottone) {
+    public ToDoGUI(JPanel currentPanel, JButton bottone, ToDo todoBottone, Controller controller, int indexBacheca, int indexToDo) {
         todoLabel.setText(todoBottone.titolo);
         descrizioneArea.setText(todoBottone.descrizione);
         dataLabel.setText(String.valueOf(todoBottone.dataDiScadenza));
         urlField.setText(ToDo.URL);
         completatoRadioButton.setSelected(todoBottone.completato);
+        coloreScelto = bottone.getBackground();
 
         JFrame frame = new JFrame("Modifica ToDo");
         frameTodo = frame;
@@ -98,6 +102,27 @@ public class ToDoGUI {
 
                 }
 
+            }
+        });
+        eliminaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int risposta = JOptionPane.showConfirmDialog(
+                        null,
+                        "Sei sicuro di voler procedere?",
+                        "Conferma",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+
+                if(risposta == JOptionPane.OK_OPTION){
+                    controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
+                    currentPanel.remove(bottone);
+                    currentPanel.revalidate();
+                    currentPanel.repaint();
+                    frameTodo.dispose();
+                    
+                }
             }
         });
     }
