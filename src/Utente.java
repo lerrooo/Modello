@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 public class Utente {
@@ -9,10 +10,10 @@ public class Utente {
     Utente(String nomeRegistrazione, String passwordRegistrazione){
         nome = nomeRegistrazione;
         password = passwordRegistrazione;
-
         bacheche.add(new Bacheca("Università", "Bacheca università", titoloBacheca.universita));
         bacheche.add(new Bacheca("Lavoro", "Bacheca lavoro", titoloBacheca.lavoro));
         bacheche.add(new Bacheca("Tempo libero", "Bacheca tempo libero", titoloBacheca.tempoLibero));
+
     }
     public void createBacheca(String titoloBacheca, String descrizioneBacheca, titoloBacheca tipoBacheca){
         if(bacheche.size() < 3)

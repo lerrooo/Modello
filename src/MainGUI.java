@@ -109,8 +109,15 @@ public class MainGUI {
             public void actionPerformed(ActionEvent e) {
 
                 String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nome ToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
+                if(nomeTemp == null || nomeTemp.trim().isEmpty()){
+                    JOptionPane.showMessageDialog(null, "inserimento fallito");
+                return;
+                }
                 String descTemp = JOptionPane.showInputDialog(null, "Inserire descrizione ToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
-
+                if(descTemp == null || descTemp.trim().isEmpty()){
+                    JOptionPane.showMessageDialog(null, "inserimento fallito");
+                return;
+                }
                 JButton newButton = new JButton(nomeTemp);
                 newButton.setBackground(Color.white);
                 newButton.addActionListener(new ActionListener() {
@@ -129,10 +136,18 @@ public class MainGUI {
                 ToDo tempToDo = new ToDo(nomeTemp, LocalDate.now(), descTemp, utenteLoggato);
                 panel.add(newButton, 1);
                 int indexBacheca = BachecheJPanel.indexOf(newButton.getParent());
+                if(indexBacheca != -1){
                 utenteLoggato.bacheche.get(indexBacheca).toDoList.add(tempToDo);
-
                 newButton.setToolTipText(String.valueOf(utenteLoggato.bacheche.get(indexBacheca).toDoList.size()));
                 resizeLayout();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "indice bacheca non trovato");
+                    panel.remove(newButton);
+                    ButtonsList.remove(newButton);
+                    panel.revalidate();
+                    panel.repaint();
+                }
             }
         });
 
