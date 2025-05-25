@@ -1,13 +1,15 @@
+package model;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Bacheca {
-    ArrayList<ToDo> toDoList = new ArrayList<ToDo>();
+    public ArrayList<ToDo> toDoList = new ArrayList<ToDo>();
 
-    String titolo;
-    String descrizione;
-    titoloBacheca tipoBacheca;
+    public String titolo;
+    public String descrizione;
+    public titoloBacheca tipoBacheca;
 
     Bacheca(String titoloInserimento, String descrizioneInserimento, titoloBacheca tipoInserimento){
         titolo = titoloInserimento;

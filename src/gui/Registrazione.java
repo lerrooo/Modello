@@ -1,3 +1,7 @@
+package gui;
+
+import model.Utente;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +20,7 @@ public class Registrazione {
     JFrame regFrame;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Registrazione");
+        JFrame frame = new JFrame("gui.Registrazione");
         frame.setContentPane(new Registrazione().RegistrazionePanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -28,7 +32,7 @@ public class Registrazione {
 
             frameLogin = frameChiamante;
             utentiTemp = utenti;
-            regFrame = new JFrame("Registrazione");
+            regFrame = new JFrame("gui.Registrazione");
             regFrame.setContentPane(RegistrazionePanel);
             regFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             regFrame.pack();
@@ -46,18 +50,18 @@ public class Registrazione {
                         if (password.equals(confermaPassword)) {
                             boolean registrato  = registraUtente(nome, password);
                             if (registrato) {
-                                JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(regFrame, "gui.Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
                                 regFrame.dispose();
                                 frameLogin.setVisible(true);
 
                             } else {
-                                JOptionPane.showMessageDialog(regFrame, "Utente già registrato", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(regFrame, "model.Utente già registrato", "gui.Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);
 
                             }
                         } else {
-                            JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
+                            JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "gui.Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
                     } else {
-                        JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "--Errore di Registrazione--", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "--Errore di gui.Registrazione--", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

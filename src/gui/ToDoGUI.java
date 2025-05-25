@@ -1,3 +1,7 @@
+package gui;
+
+import model.ToDo;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,7 +21,7 @@ public class ToDoGUI {
     Color coloreScelto;
 
     public static void main(String[] args){
-        JFrame frame = new JFrame("Modifica ToDo");
+        JFrame frame = new JFrame("Modifica model.ToDo");
         frameTodo = frame;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
@@ -26,14 +30,14 @@ public class ToDoGUI {
         frame.setResizable(false);
     }
 
-    public ToDoGUI(JButton bottone,ToDo todoBottone) {
+    public ToDoGUI(JButton bottone, ToDo todoBottone) {
         todoLabel.setText(todoBottone.titolo);
         descrizioneArea.setText(todoBottone.descrizione);
         dataLabel.setText(String.valueOf(todoBottone.dataDiScadenza));
-        urlField.setText(todoBottone.URL);
+        urlField.setText(ToDo.URL);
         completatoRadioButton.setSelected(todoBottone.completato);
 
-        JFrame frame = new JFrame("Modifica ToDo");
+        JFrame frame = new JFrame("Modifica model.ToDo");
         frameTodo = frame;
 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -51,7 +55,7 @@ public class ToDoGUI {
                 todoBottone.titolo = todoLabel.getText();
                 todoBottone.descrizione = descrizioneArea.getText();
                 todoBottone.dataDiScadenza = LocalDate.parse(dataLabel.getText());
-                todoBottone.URL = urlField.getText();
+                ToDo.URL = urlField.getText();
                 todoBottone.completato = completatoRadioButton.isSelected();
 
             }
@@ -67,7 +71,7 @@ public class ToDoGUI {
         modificaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nuovo nome ToDo", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
+                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nuovo nome model.ToDo", "Modifica model.ToDo", JOptionPane.INFORMATION_MESSAGE);
                 if(nomeTemp == null) return;
                 if(nomeTemp.length() > 20){
                     JOptionPane.showMessageDialog(frameTodo, "Inserisci meno di 20 caratteri", "Errore", JOptionPane.INFORMATION_MESSAGE);
@@ -84,7 +88,7 @@ public class ToDoGUI {
         modificaData.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
+                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", "Modifica model.ToDo", JOptionPane.INFORMATION_MESSAGE);
 
                 try{
                     LocalDate data = LocalDate.parse(dataStr);

@@ -1,3 +1,8 @@
+import model.Bacheca;
+import model.ToDo;
+import model.Utente;
+import model.titoloBacheca;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -52,13 +57,13 @@ public class Main {
                         "\n1. Crea bacheca" +
                         "\n2. Elimina bacheca" +
                         "\n3. Modifica bacheca" +
-                        "\n4. Aggiungi ToDo" +
-                        "\n5. Elimina ToDo" +
-                        "\n6. Modifica ToDo" +
-                        "\n7. Cambia posizione ToDo" +
-                        "\n8. Scambia ToDo" +
-                        "\n9. Completa ToDo" +
-                        "\n10.Cerca ToDo" +
+                        "\n4. Aggiungi model.ToDo" +
+                        "\n5. Elimina model.ToDo" +
+                        "\n6. Modifica model.ToDo" +
+                        "\n7. Cambia posizione model.ToDo" +
+                        "\n8. Scambia model.ToDo" +
+                        "\n9. Completa model.ToDo" +
+                        "\n10.Cerca model.ToDo" +
                         "\n11.Esci dal programma"
                 );
                 input = new Scanner(System.in);
@@ -264,7 +269,7 @@ public class Main {
   private static void aggiungiToDo(Utente utenteLoggato){
       Scanner input = new Scanner(System.in);
 
-      System.out.println("Inserisci il numero della bacheca a cui aggiungere un ToDo:");
+      System.out.println("Inserisci il numero della bacheca a cui aggiungere un model.ToDo:");
       for(int i = 0; i < utenteLoggato.bacheche.size(); i++){
           System.out.println(i + ". " + utenteLoggato.bacheche.get(i).titolo);
       }
@@ -272,7 +277,7 @@ public class Main {
       int scelta = input.nextInt();
       input.nextLine();
 
-      System.out.println("Inserisci il titolo del ToDo");
+      System.out.println("Inserisci il titolo del model.ToDo");
       String titoloTemp = input.nextLine();
 
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -280,7 +285,7 @@ public class Main {
       //Data temporanea non da input
       LocalDate dataTemp = LocalDate.parse("01/01/2000", formatter);
 
-      System.out.println("Inserisci la descrizione del ToDo");
+      System.out.println("Inserisci la descrizione del model.ToDo");
       String descTemp = input.nextLine();
 
       utenteLoggato.bacheche.get(scelta).toDoList.add(new ToDo(titoloTemp, dataTemp, descTemp, utenteLoggato));
@@ -291,7 +296,7 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
 
-        System.out.println("Inserisci il nome del ToDo da eliminare");
+        System.out.println("Inserisci il nome del model.ToDo da eliminare");
         String nomeToDo = input.nextLine();
 
         for(Bacheca bachecaTemp : utenteLoggato.bacheche){
@@ -311,7 +316,7 @@ public class Main {
 
       Scanner input = new Scanner(System.in);
 
-      System.out.println("Inserisci il nome del ToDo da modificare");
+      System.out.println("Inserisci il nome del model.ToDo da modificare");
       String nomeToDo = input.nextLine();
       ToDo tempToDo = null;
       for(Bacheca bachecaTemp : utenteLoggato.bacheche){
@@ -331,7 +336,7 @@ public class Main {
           LocalDate dataTemp = LocalDate.parse("01/01/2000", formatter);
           tempToDo.modifyToDo(titoloTemp, dataTemp, descrizioneTemp, utenteLoggato.nome);
 
-      }else System.out.println("- ToDo non trovato -");
+      }else System.out.println("- model.ToDo non trovato -");
 
 
 
@@ -339,7 +344,7 @@ public class Main {
   }
   private static void cambiaPosizioneToDo(Utente utenteLoggato){
       Scanner input = new Scanner(System.in);
-      System.out.println("Inserire il nome del ToDo:");
+      System.out.println("Inserire il nome del model.ToDo:");
       String nomeToDo = input.nextLine();
       int indexBachecaStart = -1;
       int indexToDoStart = -1;
@@ -351,21 +356,21 @@ public class Main {
               if(utenteLoggato.bacheche.get(j).toDoList.get(i).titolo.equals(nomeToDo)){
                   indexBachecaStart = j;
                   indexToDoStart = i;
-                  System.out.println("indice bacheca:" + indexBachecaStart + "\n indice ToDo:" + indexToDoStart );
+                  System.out.println("indice bacheca:" + indexBachecaStart + "\n indice model.ToDo:" + indexToDoStart );
               }
           }
       }
       if(indexBachecaStart != -1){
 
-          System.out.println("in che bacheca vuoi spostare il ToDo? : ");
+          System.out.println("in che bacheca vuoi spostare il model.ToDo? : ");
           indexBachecaEnd=input.nextInt();
           input.nextLine();
-          System.out.println("in che posizione della bacheca vuoi spostare il ToDo? : ");
+          System.out.println("in che posizione della bacheca vuoi spostare il model.ToDo? : ");
           indexToDoEnd=input.nextInt();
           input.nextLine();
           utenteLoggato.changePositionToDo(indexBachecaStart, indexBachecaEnd, indexToDoStart, indexToDoEnd);
 
-      }else System.out.println("- ToDo non trovato -");
+      }else System.out.println("- model.ToDo non trovato -");
 
   }
     private static void swapPosizioneToDo(Utente utenteLoggato){
@@ -381,7 +386,7 @@ public class Main {
         int scelta = input.nextInt();
         input.nextLine();
         Bacheca bachecaTemp = utenteLoggato.bacheche.get(scelta);
-        System.out.println("Inserisci il nome del primo ToDo:");
+        System.out.println("Inserisci il nome del primo model.ToDo:");
         nomeTemp = input.nextLine();
         for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
             if(bachecaTemp.toDoList.get(i).titolo.equals(nomeTemp)){
@@ -390,7 +395,7 @@ public class Main {
         }
         if(indexToDoStart == -1)
             return;
-        System.out.println("Inserisci il nome del secondo ToDo:");
+        System.out.println("Inserisci il nome del secondo model.ToDo:");
         nomeTemp = input.nextLine();
         for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
             if(bachecaTemp.toDoList.get(i).titolo.equals(nomeTemp)){
@@ -415,7 +420,7 @@ public class Main {
         input.nextLine();
         Bacheca bachecaTemp = utenteLoggato.bacheche.get(scelta);
 
-        System.out.println("Inserisci il nome del ToDo:");
+        System.out.println("Inserisci il nome del model.ToDo:");
         nomeTemp = input.nextLine();
         for(int i = 0; i < bachecaTemp.toDoList.size(); i++){
             if(bachecaTemp.toDoList.get(i).titolo.equals(nomeTemp)){
@@ -429,15 +434,15 @@ public class Main {
     private static void cercaToDo(Utente utenteLoggato){
         String nomeToDo;
         Scanner input = new Scanner(System.in);
-        System.out.println("Inserisci il nome del ToDo:");
+        System.out.println("Inserisci il nome del model.ToDo:");
         nomeToDo = input.nextLine();
 
         ToDo toDoTemp = utenteLoggato.searchToDo(nomeToDo);
 
         if(toDoTemp != null)
-            System.out.println("ToDo trovato - con scadenza il: " + toDoTemp.visualizeDeadline());
+            System.out.println("model.ToDo trovato - con scadenza il: " + toDoTemp.visualizeDeadline());
 
-        else System.out.println("ToDo non trovato");
+        else System.out.println("model.ToDo non trovato");
     };
 
 }

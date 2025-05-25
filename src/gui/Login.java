@@ -1,9 +1,15 @@
+package gui;
+
+import Controller.Controller;
+import model.Utente;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Login {
+    private Controller controller;
     private static JFrame mainFrame;
     private JPanel LoginPanel;
     private JTextField textField1;
@@ -14,7 +20,7 @@ public class Login {
     Utente utenteLoggato = null;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("MainGUI");
+        JFrame frame = new JFrame("gui.MainGUI");
         frame.setContentPane(new Login().LoginPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -23,6 +29,7 @@ public class Login {
         mainFrame = frame;
     }
     public Login() {
+        controller = new Controller();
         accediButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -41,7 +48,7 @@ public class Login {
 
                  System.out.println("utente trovato");
                 }else {
-                    JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(mainFrame, "model.Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
