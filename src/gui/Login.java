@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+
 public class Login {
     private Controller controller;
     private static JFrame mainFrame;
@@ -16,11 +17,9 @@ public class Login {
     private JPasswordField passwordField1;
     private JButton accediButton;
     private JButton registratiButton;
-    ArrayList<Utente> utenti = new ArrayList<Utente>();
-    Utente utenteLoggato = null;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("gui.MainGUI");
+        JFrame frame = new JFrame("MainGUI");
         frame.setContentPane(new Login().LoginPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -28,8 +27,11 @@ public class Login {
         frame.setSize(500, 300);
         mainFrame = frame;
     }
+
+
     public Login() {
         controller = new Controller();
+
         accediButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -39,23 +41,26 @@ public class Login {
                     return;
                 }
 
-                utenteLoggato = loginUtente(utenti, textField1.getText(), passwordField1.getPassword());
+                Utente utenteTemp = loginUtente(controller.getUtenti(), textField1.getText(), passwordField1.getPassword());
 
-                if(utenteLoggato != null){
-                    MainGUI mainGuiAfterLogin = new MainGUI(mainFrame, utenteLoggato);
+//                controller.setUtenteLoggato(utenteTemp);
+
+                if(utenteTemp != null){
+                    controller.setUtenteLoggato(utenteTemp);
+                    MainGUI mainGuiAfterLogin = new MainGUI(mainFrame, controller);
                     mainFrame.setVisible(false);
                     mainFrame.dispose();
 
                  System.out.println("utente trovato");
                 }else {
-                    JOptionPane.showMessageDialog(mainFrame, "model.Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
         registratiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Registrazione registrazioneGUI = new Registrazione(mainFrame, utenti);
+                Registrazione registrazioneGUI = new Registrazione(mainFrame, controller);
                 registrazioneGUI.regFrame.setVisible(true);
                 mainFrame.setVisible(false);
             }

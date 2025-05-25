@@ -1,5 +1,6 @@
 package gui;
 
+import Controller.Controller;
 import model.ToDo;
 import model.Utente;
 
@@ -48,9 +49,8 @@ public class MainGUI {
             }
         });
     }
-    public MainGUI(JFrame frameChiamante, Utente utenteLog) {
-        System.out.println("asdasd");
-        utenteLoggato = utenteLog;
+    public MainGUI(JFrame frameChiamante, Controller controller) {
+        utenteLoggato = controller.getUtenteLoggato();
         JFrame frame = new JFrame("Aggiungi Bottone sopra il +");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
@@ -94,12 +94,12 @@ public class MainGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nome model.ToDo", "Crea model.ToDo", JOptionPane.INFORMATION_MESSAGE);
+                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nomeToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
                 if(nomeTemp == null || nomeTemp.trim().isEmpty()){
                     JOptionPane.showMessageDialog(null, "inserimento fallito");
                 return;
                 }
-                String descTemp = JOptionPane.showInputDialog(null, "Inserire descrizione model.ToDo", "Crea model.ToDo", JOptionPane.INFORMATION_MESSAGE);
+                String descTemp = JOptionPane.showInputDialog(null, "Inserire descrizione ToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
                 if(descTemp == null || descTemp.trim().isEmpty()){
                     JOptionPane.showMessageDialog(null, "inserimento fallito");
                 return;

@@ -1,15 +1,14 @@
 package gui;
 
+import Controller.Controller;
 import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class Registrazione {
-
-    private ArrayList<Utente> utentiTemp;
+;
     private JFrame frameLogin;
     private JPanel RegistrazionePanel;
     private JTextField textField1;
@@ -20,7 +19,7 @@ public class Registrazione {
     JFrame regFrame;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("gui.Registrazione");
+        JFrame frame = new JFrame("Registrazione");
         frame.setContentPane(new Registrazione().RegistrazionePanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -28,11 +27,10 @@ public class Registrazione {
     }
     public Registrazione(){}
 
-    public Registrazione(JFrame frameChiamante, ArrayList<Utente> utenti){
+    public Registrazione(JFrame frameChiamante, Controller controller){
 
             frameLogin = frameChiamante;
-            utentiTemp = utenti;
-            regFrame = new JFrame("gui.Registrazione");
+            regFrame = new JFrame("Registrazione");
             regFrame.setContentPane(RegistrazionePanel);
             regFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             regFrame.pack();
@@ -48,18 +46,19 @@ public class Registrazione {
 
                     if (!nome.trim().isEmpty() && !password.isEmpty() && !confermaPassword.isEmpty()) {
                         if (password.equals(confermaPassword)) {
-                            boolean registrato  = registraUtente(nome, password);
-                            if (registrato) {
-                                JOptionPane.showMessageDialog(regFrame, "gui.Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                            Utente registrato  = registraUtente(nome, password);
+                            if (registrato != null) {
+                                controller.addUtente(registrato);
+                                JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
                                 regFrame.dispose();
                                 frameLogin.setVisible(true);
 
                             } else {
-                                JOptionPane.showMessageDialog(regFrame, "model.Utente già registrato", "gui.Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(regFrame, "Utente già registrato", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);
 
                             }
                         } else {
-                            JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "gui.Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
+                            JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
                     } else {
                         JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "--Errore di gui.Registrazione--", JOptionPane.ERROR_MESSAGE);
                     }
@@ -67,14 +66,13 @@ public class Registrazione {
             }
             );
     }
-        private boolean registraUtente (String nomeTemp, String passwordTemp){
+        private Utente registraUtente (String nomeTemp, String passwordTemp){
 
             if (!nomeTemp.trim().isEmpty() && !passwordTemp.isEmpty()) {
-                Utente nuovoUtente = new Utente(nomeTemp, passwordTemp);
-                utentiTemp.add(nuovoUtente);
-                return true;
+
+                return new Utente(nomeTemp, passwordTemp);
             }
-            return false;
+            return null;
         }
 
 

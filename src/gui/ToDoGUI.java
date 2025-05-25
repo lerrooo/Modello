@@ -21,7 +21,7 @@ public class ToDoGUI {
     Color coloreScelto;
 
     public static void main(String[] args){
-        JFrame frame = new JFrame("Modifica model.ToDo");
+        JFrame frame = new JFrame("Modifica ToDo");
         frameTodo = frame;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
@@ -37,7 +37,7 @@ public class ToDoGUI {
         urlField.setText(ToDo.URL);
         completatoRadioButton.setSelected(todoBottone.completato);
 
-        JFrame frame = new JFrame("Modifica model.ToDo");
+        JFrame frame = new JFrame("Modifica ToDo");
         frameTodo = frame;
 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -71,7 +71,7 @@ public class ToDoGUI {
         modificaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nuovo nome model.ToDo", "Modifica model.ToDo", JOptionPane.INFORMATION_MESSAGE);
+                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nuovo nome ToDo", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
                 if(nomeTemp == null) return;
                 if(nomeTemp.length() > 20){
                     JOptionPane.showMessageDialog(frameTodo, "Inserisci meno di 20 caratteri", "Errore", JOptionPane.INFORMATION_MESSAGE);
@@ -80,7 +80,7 @@ public class ToDoGUI {
                 else
                 {
                     todoLabel.setText(nomeTemp);
-                    todoLabel.setFont(new Font(null, Font.PLAIN, (int) (36 - (nomeTemp.length() * 1))));
+                    todoLabel.setFont(new Font(null, Font.PLAIN, (int) (36 - (nomeTemp.length()))));
                 }
 
             }
@@ -88,7 +88,7 @@ public class ToDoGUI {
         modificaData.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", "Modifica model.ToDo", JOptionPane.INFORMATION_MESSAGE);
+                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
 
                 try{
                     LocalDate data = LocalDate.parse(dataStr);
@@ -103,6 +103,10 @@ public class ToDoGUI {
     }
 
     public static Color coloreComplementare(Color colore) {
+
+        if(colore == null)
+            return Color.WHITE;
+
         int complementoRosso = 255 - colore.getRed();
         int complementoVerde = 255 - colore.getGreen();
         int complementoBlu = 255 - colore.getBlue();
