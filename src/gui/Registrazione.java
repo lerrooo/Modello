@@ -6,6 +6,7 @@ import model.Utente;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class Registrazione {
 ;
@@ -48,7 +49,13 @@ public class Registrazione {
                         if (password.equals(confermaPassword)) {
                             Utente registrato  = registraUtente(nome, password);
                             if (registrato != null) {
-                                controller.addUtente(registrato);
+
+                                try {
+                                    controller.addUtente(registrato);
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+
                                 JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
                                 regFrame.dispose();
                                 frameLogin.setVisible(true);

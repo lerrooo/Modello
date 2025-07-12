@@ -116,7 +116,7 @@ public class ToDoGUI {
                 );
 
                 if(risposta == JOptionPane.OK_OPTION){
-                    controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
+                    //controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
                     currentPanel.remove(bottone);
                     currentPanel.revalidate();
                     currentPanel.repaint();

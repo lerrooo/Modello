@@ -6,7 +6,9 @@ import model.Utente;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Login {
@@ -40,21 +42,32 @@ public class Login {
                     JOptionPane.showMessageDialog(mainFrame, "Inserisci nome utente e password", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
+                try {
+                    boolean loginEffettuato = controller.loginUtente(textField1.getText(), passwordField1.getPassword());
+                    System.out.println(loginEffettuato);
+                    if (loginEffettuato){
+                        System.out.println("utente trovato");
+                        MainGUI mainGuiAfterLogin = new MainGUI(mainFrame, controller);
+                        mainFrame.setVisible(false);
+                        mainFrame.dispose();
+                    }
 
-                Utente utenteTemp = loginUtente(controller.getUtenti(), textField1.getText(), passwordField1.getPassword());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
 //                controller.setUtenteLoggato(utenteTemp);
 
-                if(utenteTemp != null){
-                    controller.setUtenteLoggato(utenteTemp);
-                    MainGUI mainGuiAfterLogin = new MainGUI(mainFrame, controller);
-                    mainFrame.setVisible(false);
-                    mainFrame.dispose();
-
-                 System.out.println("utente trovato");
-                }else {
-                    JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
-                }
+//                if(utenteTemp != null){
+//                    controller.setUtenteLoggato(utenteTemp);
+//                    MainGUI mainGuiAfterLogin = new MainGUI(mainFrame, controller);
+//                    mainFrame.setVisible(false);
+//                    mainFrame.dispose();
+//
+//                 System.out.println("utente trovato");
+//                }else {
+//                    JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "ATTENZIONE", JOptionPane.INFORMATION_MESSAGE);
+//                }
             }
         });
         registratiButton.addActionListener(new ActionListener() {

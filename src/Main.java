@@ -245,6 +245,7 @@ public class Main {
               "\n2. Lavoro" +
               "\n3. Tempo libero"
       );
+
       int sceltaTipo = input.nextInt();
       titoloBacheca titoloTemp = null;
       switch (sceltaTipo){
@@ -262,7 +263,6 @@ public class Main {
               System.out.println("Numero inserito non corretto");
               break;
       }
-
 
   }
 

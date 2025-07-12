@@ -11,7 +11,7 @@ public class Bacheca {
     public String descrizione;
     public titoloBacheca tipoBacheca;
 
-    Bacheca(String titoloInserimento, String descrizioneInserimento, titoloBacheca tipoInserimento){
+    public Bacheca(String titoloInserimento, int numeroBacheca, String descrizioneInserimento, titoloBacheca tipoInserimento){
         titolo = titoloInserimento;
         descrizione = descrizioneInserimento;
         tipoBacheca = tipoInserimento;
