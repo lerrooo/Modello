@@ -1,18 +1,15 @@
 package gui;
 
 import Controller.Controller;
-import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Login {
-    private Controller controller;
+    private final Controller controller;
     private static JFrame mainFrame;
     private JPanel LoginPanel;
     private JTextField textField1;
@@ -20,7 +17,7 @@ public class Login {
     private JButton accediButton;
     private JButton registratiButton;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         JFrame frame = new JFrame("MainGUI");
         frame.setContentPane(new Login().LoginPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,7 +28,7 @@ public class Login {
     }
 
 
-    public Login() {
+    public Login() throws SQLException {
         controller = new Controller();
 
         accediButton.addActionListener(new ActionListener() {
@@ -78,13 +75,5 @@ public class Login {
                 mainFrame.setVisible(false);
             }
         });
-    }
-    private static Utente loginUtente(ArrayList<Utente> utenti, String NomeUtente, char[] Password){
-        String passwordString = new String(Password);
-        for (Utente utenteTemp : utenti){
-            if(utenteTemp.nome.equals(NomeUtente) && utenteTemp.password.equals(passwordString))
-                return utenteTemp;
-        }
-        return null;
     }
 }

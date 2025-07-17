@@ -9,12 +9,13 @@ public class Bacheca {
 
     public String titolo;
     public String descrizione;
+    public int numeroBacheca;
     public titoloBacheca tipoBacheca;
 
-    public Bacheca(String titoloInserimento, int numeroBacheca, String descrizioneInserimento, titoloBacheca tipoInserimento){
+    public Bacheca(String titoloInserimento, int numeroBacheca, String descrizioneInserimento){
         titolo = titoloInserimento;
         descrizione = descrizioneInserimento;
-        tipoBacheca = tipoInserimento;
+        this.numeroBacheca = numeroBacheca;
     }
 
     public void createToDo(String titoloToDo, LocalDate dataToDo, String descrizioneToDo, Utente utente){
@@ -48,4 +49,19 @@ public class Bacheca {
     }
 
 
+    public String getTitolo() {
+        return titolo;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public Integer getNumeroBacheca() {
+        return numeroBacheca;
+    }
+
+    public ArrayList<ToDo> getToDoList() {
+        return toDoList;
+    }
 }

@@ -1,8 +1,6 @@
 package gui;
 
 import Controller.Controller;
-import model.ToDo;
-import model.Utente;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -30,11 +28,13 @@ public class MainGUI {
         MainGUI.controller = controller;
         utenteLoggato = controller.getUtenteLoggato();
 
-        JFrame frame = new JFrame("Aggiungi Bottone sopra il +");
+        JFrame frame = new JFrame("Interfaccia principale");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setSize(800, 800);
+//      frame.setSize(800, 800);
         frame.setLayout(new GridLayout(1, 3));
+
+
 
         JPanel panel1 = createPanelWithButton();
         JPanel panel2 = createPanelWithButton();
@@ -61,65 +61,88 @@ public class MainGUI {
     }
 
     private JPanel createPanelWithButton() {
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JPanel panel = new JPanel();
-        JButton removeButton = new JButton();
+        // Top panel con titolo e pulsanti
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        removeButton.setHorizontalAlignment(SwingConstants.CENTER);
-        removeButton.setText("x");
-        panel.add(removeButton);
+        // Titolo
+        JLabel titolo = new JLabel(controller.getTitoliBacheche().get(0));
+        titolo.setHorizontalAlignment(SwingConstants.CENTER);
+        titolo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        TitoliList.add(titolo);
+
+        // Riga con pulsanti [x] e [+ Cerca]
+        JPanel buttonsRow = new JPanel(new BorderLayout());
+
+        JButton removeButton = new JButton("x");
         removeButtons.add(removeButton);
 
+        JButton searchButton = new JButton("+ Cerca");
+
+        // Listener per rimuovere il pannello
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Container parent = panel.getParent();
-                int indexBacheca = BachecheJPanel.indexOf(panel);
-                resizeLayout();
+                Container parent = mainPanel.getParent();
+                int indexBacheca = BachecheJPanel.indexOf(mainPanel);
                 if (parent != null) {
-
-                    parent.remove(panel);
-                    BachecheJPanel.remove(panel);
-
+                    parent.remove(mainPanel);
+                    BachecheJPanel.remove(mainPanel);
+                    TitoliList.remove(indexBacheca);
+                    removeButtons.remove(removeButton);
                     parent.revalidate();
                     parent.repaint();
-
-
-                    TitoliList.remove(indexBacheca);
-
-                    for(JLabel titolo : TitoliList){
-                        System.out.println(titolo.getText());
-                    }
-
-
                 }
                 resizeLayout();
             }
         });
 
-        //JPanel topPanel = new JPanel();
+        // Aggiunta componenti alla riga pulsanti
+        buttonsRow.add(searchButton, BorderLayout.WEST);
+        buttonsRow.add(removeButton, BorderLayout.EAST);
+        buttonsRow.setOpaque(false); // mantiene sfondo trasparente
 
-        //topPanel.setBorder(new EmptyBorder(0, 50, 0, 50));
-        //panel.add(topPanel);
+        // Aggiunta al topPanel
+        topPanel.add(titolo);
+        topPanel.add(Box.createVerticalStrut(5)); // spazio
+        topPanel.add(buttonsRow);
 
+        // Pannello centrale (dove si potrebbero aggiungere ToDo)
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setOpaque(false);
 
-        JLabel titolo = new JLabel("");
-        titolo.setHorizontalAlignment(SwingConstants.CENTER);
-        TitoliList.add(titolo);
-        panel.add(titolo, 0);
+        // Pulsante per aggiungere ToDo
+        JButton plusButton = getJButton();
 
-        panel.setBorder(new EmptyBorder(0, 50, 0, 50));
-        BachecheJPanel.add(panel);
+        // Assembla i pannelli
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(plusButton, BorderLayout.SOUTH); // Il bottone va in basso
+        mainPanel.add(centerPanel, BorderLayout.CENTER); // futuro spazio per i ToDo
 
-        JButton plusButton = new JButton("+");
+        // Aggiunta del pannello alla lista
+        BachecheJPanel.add(mainPanel);
+
+        return mainPanel;
+    }
+
+    private static JButton getJButton() {
+        JButton plusButton = new JButton("+ Aggiungi ToDo");
+        plusButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         plusButton.setHorizontalAlignment(SwingConstants.CENTER);
+
 //        plusButton.addActionListener(new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
 //                int indexBacheca = BachecheJPanel.indexOf(plusButton.getParent());
 //                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nomeToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
 //
-//                if(nomeTemp == null || nomeTemp.trim().isEmpty() || (utenteLoggato.bacheche.get(indexBacheca).findToDoIndex(nomeTemp) != -1)){
+//                //inserire check per unique al nome di bacheca
+//                if(nomeTemp == null || nomeTemp.trim().isEmpty()){
 //                    JOptionPane.showMessageDialog(null, "inserimento fallito");
 //                return;
 //                }
@@ -129,12 +152,12 @@ public class MainGUI {
 //                    JOptionPane.showMessageDialog(null, "inserimento fallito");
 //                return;
 //                }
+//
 //                JButton newButton = new JButton(nomeTemp);
 //                newButton.setBackground(Color.white);
 //                newButton.addActionListener(new ActionListener() {
 //                    @Override
 //                    public void actionPerformed(ActionEvent e) {
-////commento
 //                        int indexBacheca = BachecheJPanel.indexOf(newButton.getParent());
 //                        int indexToDo = utenteLoggato.bacheche.get(indexBacheca).findToDoIndex(newButton.getText());
 //                        ToDo tempToDo = utenteLoggato.bacheche.get(indexBacheca).toDoList.get(indexToDo);
@@ -142,7 +165,7 @@ public class MainGUI {
 //                        ToDoGUI.frameTodo.setVisible(true);
 //                    }
 //                });
-
+//
 //                ButtonsList.add(newButton);
 //
 //                ToDo tempToDo = new ToDo(nomeTemp, LocalDate.now(), descTemp, utenteLoggato);
@@ -162,11 +185,9 @@ public class MainGUI {
 //                }
 //            }
 //        });
-
-        panel.add(plusButton);
-
-        return panel;
+        return plusButton;
     }
+
 
     private static void coloraPanels(ArrayList<JPanel> BachecheList, ArrayList<JLabel> TitoliList){
         for(int i = 0; i < BachecheList.size(); i++){

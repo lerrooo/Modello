@@ -1,12 +1,12 @@
 package gui;
 
 import Controller.Controller;
-import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class Registrazione {
 ;
@@ -42,16 +42,14 @@ public class Registrazione {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String nome = textField1.getText();
-                    String password = new String(passwordField1.getPassword());
-                    String confermaPassword = new String(passwordField2.getPassword());
+                    char[] password = passwordField1.getPassword();
+                    char[] confermaPassword = passwordField2.getPassword();
 
-                    if (!nome.trim().isEmpty() && !password.isEmpty() && !confermaPassword.isEmpty()) {
-                        if (password.equals(confermaPassword)) {
-                            Utente registrato  = registraUtente(nome, password);
-                            if (registrato != null) {
+                    if (!nome.trim().isEmpty() && password.length != 0 && confermaPassword.length != 0) {
 
+                        if (Arrays.equals(password, confermaPassword)) {
                                 try {
-                                    controller.addUtente(registrato);
+                                    controller.addUtente(nome, password);
                                 } catch (SQLException ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -66,21 +64,12 @@ public class Registrazione {
                             }
                         } else {
                             JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
-                    } else {
-                        JOptionPane.showMessageDialog(regFrame, "Inserisci nome utente e password.", "--Errore di gui.Registrazione--", JOptionPane.ERROR_MESSAGE);
                     }
-                }
+
             }
             );
     }
-        private Utente registraUtente (String nomeTemp, String passwordTemp){
 
-            if (!nomeTemp.trim().isEmpty() && !passwordTemp.isEmpty()) {
-
-                return new Utente(nomeTemp, passwordTemp);
-            }
-            return null;
-        }
 
 
 }
