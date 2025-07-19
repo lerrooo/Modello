@@ -58,7 +58,7 @@ public class ToDoGUI {
                 bottone.setBackground(coloreScelto);
                 todoBottone.titolo = todoLabel.getText();
                 todoBottone.descrizione = descrizioneArea.getText();
-                todoBottone.dataDiScadenza = LocalDate.parse(dataLabel.getText());
+//                todoBottone.dataDiScadenza = LocalDate.parse(dataLabel.getText());
                 ToDo.URL = urlField.getText();
                 todoBottone.completato = completatoRadioButton.isSelected();
 

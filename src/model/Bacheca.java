@@ -18,9 +18,9 @@ public class Bacheca {
         this.numeroBacheca = numeroBacheca;
     }
 
-    public void createToDo(String titoloToDo, LocalDate dataToDo, String descrizioneToDo, Utente utente){
-        toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
-    }
+//    public void createToDo(String titoloToDo, LocalDate dataToDo, String descrizioneToDo, Utente utente){
+//        toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
+//    }
 
     public void deleteToDo(int index){
         toDoList.remove(index);
