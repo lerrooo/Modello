@@ -12,10 +12,9 @@ public class Bacheca {
     public int numeroBacheca;
     public titoloBacheca tipoBacheca;
 
-    public Bacheca(String titoloInserimento, int numeroBacheca, String descrizioneInserimento){
+    public Bacheca(String titoloInserimento, String descrizioneInserimento){
         titolo = titoloInserimento;
         descrizione = descrizioneInserimento;
-        this.numeroBacheca = numeroBacheca;
     }
 
 //    public void createToDo(String titoloToDo, LocalDate dataToDo, String descrizioneToDo, Utente utente){

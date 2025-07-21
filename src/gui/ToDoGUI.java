@@ -36,12 +36,12 @@ public class ToDoGUI {
 //        frame.setResizable(false);
 //    }
 
-    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, int indexBacheca, Controller controller) throws SQLException {
+    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, String nomeBacheca, Controller controller) throws SQLException {
 
         ArrayList<String> caratteristiche = new ArrayList<String>();
 
 
-        caratteristiche = controller.getSingleToDoDB(nomeToDo, indexBacheca);
+        caratteristiche = controller.getSingleToDoDB(nomeToDo, nomeBacheca);
 
 //        if(descrizione == null)
 //            return;
@@ -142,7 +142,7 @@ public class ToDoGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    controller.updateToDo(todoLabel.getText(), nomeToDo, descrizioneArea.getText(), dataLabel.getText(), urlField.getText(), coloreScelto, completatoRadioButton.isSelected(), indexBacheca);
+                    controller.updateToDo(todoLabel.getText(), nomeToDo, descrizioneArea.getText(), dataLabel.getText(), urlField.getText(), coloreScelto, completatoRadioButton.isSelected(), nomeBacheca);
                     todoBottone.setText(todoLabel.getText());
                     todoBottone.setForeground(coloreComplementare(coloreScelto));
                     todoBottone.setBackground(coloreScelto);

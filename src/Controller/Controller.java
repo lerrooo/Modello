@@ -23,7 +23,7 @@ public class Controller {
 
     private DatabaseConnection dbConnection = new DatabaseConnection();
     private ArrayList<Bacheca> Bacheche = new ArrayList<Bacheca>();
-    ArrayList<ToDo> ToDos = new ArrayList<ToDo>();
+    private ArrayList<ToDo> ToDos = new ArrayList<ToDo>();
     private String utenteLoggato = null;
 
 //    public ArrayList<Utente> getUtenti(){
@@ -80,7 +80,7 @@ public class Controller {
     public ArrayList<Bacheca> getBacheche() throws SQLException {
         ArrayList<Bacheca> bacheche = new ArrayList<Bacheca>();
 
-        String query = "SELECT * FROM Bacheca WHERE Owner = ? ORDER BY numeroBacheca";
+        String query = "SELECT * FROM Bacheca WHERE Owner = ? ORDER BY titolo DESC";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, utenteLoggato);
 
@@ -88,13 +88,12 @@ public class Controller {
 
         while (rs.next()) {
             String titolo = rs.getString("Titolo");
-            int numeroBacheca = rs.getInt("numeroBacheca");
             String descrizione = rs.getString("Descrizione");
 
-            System.out.println("Bacheca: " + titolo + ", numero: " + numeroBacheca + ", owner: " + utenteLoggato + ", descrizione: " + descrizione);
+            System.out.println("Bacheca: " + titolo + ", numero: " + ", owner: " + utenteLoggato + ", descrizione: " + descrizione);
 
 
-            bacheche.add(new Bacheca(titolo, numeroBacheca, descrizione));
+            bacheche.add(new Bacheca(titolo, descrizione));
 
 
         }
@@ -123,12 +122,12 @@ public class Controller {
             String image = rs.getString("Image");
             String Color = rs.getString("coloreSfondo");
             boolean completato = rs.getBoolean("completato");
-            int numeroBacheca = rs.getInt("numeroBacheca");
+            String nomeBacheca = rs.getString("nomeBacheca");
 
             System.out.println(titolo + " " + descrizione + " " + dataDiScadenza + " "
-                    + url + " " + image + " " + Color + " " + completato + " " + numeroBacheca);
+                    + url + " " + image + " " + Color + " " + completato + " " + nomeBacheca);
 
-            TodoArr.add(new ToDo(titolo, descrizione, dataDiScadenza, url, image, Color, completato, numeroBacheca));
+            TodoArr.add(new ToDo(titolo, descrizione, dataDiScadenza, url, image, Color, completato, nomeBacheca));
 
 
         }
@@ -139,7 +138,7 @@ public class Controller {
         return TodoArr;
     }
 
-    public ArrayList<String> getSingleToDoDB(String nomeToDo, int indexBacheca) throws SQLException {
+    public ArrayList<String> getSingleToDoDB(String nomeToDo, String nomeBacheca) throws SQLException {
 
         ArrayList<String> result = new ArrayList<String>();
 
@@ -148,12 +147,12 @@ public class Controller {
         String url;
         boolean completato;
 
-        String query = "SELECT * FROM ToDo WHERE Autore = ? AND Titolo = ? AND NumeroBacheca = ?";
+        String query = "SELECT * FROM ToDo WHERE Autore = ? AND Titolo = ? AND nomeBacheca = ?";
 
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, utenteLoggato);
         ps.setString(2, nomeToDo);
-        ps.setInt(3, indexBacheca);
+        ps.setString(3, nomeBacheca);
 
         ResultSet rs = ps.executeQuery();
 
@@ -184,15 +183,16 @@ public class Controller {
     }
 
 
-    public void addToDoDB(String nomeToDo, int index, String descrizione) throws SQLException {
+    public void addToDoDB(String nomeToDo, String nomeBacheca, String descrizione) throws SQLException {
 
-        String query = "INSERT INTO TODO(titolo, descrizione, datadiscadenza, autore, numerobacheca) VALUES (?, ?, ?, ?, ?)";
+
+        String query = "INSERT INTO TODO(titolo, descrizione, datadiscadenza, autore, nomeBacheca) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, nomeToDo);
         ps.setString(2, descrizione);
         ps.setDate(3, java.sql.Date.valueOf("2026-01-01"));
         ps.setString(4, utenteLoggato);
-        ps.setInt(5, index);
+        ps.setString(5, nomeBacheca);
         ps.executeUpdate();
         ps.close();
 
@@ -235,11 +235,13 @@ public class Controller {
 
     // Ritorna lista di titoli ToDo per ogni bacheca (come lista di liste)
     public ArrayList<ArrayList<String>> getTuttiTitoliToDo() {
+
         ArrayList<ArrayList<String>> result = new ArrayList<>();
+
         for (int i = 0; i < Bacheche.size(); i++) {
             ArrayList<String> titoli = new ArrayList<>();
             for (ToDo t : ToDos) {
-                if(t.bachecaId == i)
+                if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
                     titoli.add(t.getTitolo());
             }
             result.add(titoli);
@@ -247,20 +249,20 @@ public class Controller {
         return result;
     }
 
-    public ArrayList<ArrayList<String>> getTuttiColoriToDo() {
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        for (int i = 0; i < Bacheche.size(); i++) {
-            ArrayList<String> colori = new ArrayList<>();
-            for (ToDo t : ToDos) {
-                if(t.bachecaId == i)
-                    colori.add(t.Colore);
-            }
-            result.add(colori);
-        }
-        return result;
-    }
+//    public ArrayList<ArrayList<String>> getTuttiColoriToDo() {
+//        ArrayList<ArrayList<String>> result = new ArrayList<>();
+//        for (int i = 0; i < Bacheche.size(); i++) {
+//            ArrayList<String> colori = new ArrayList<>();
+//            for (ToDo t : ToDos) {
+//                if(t.bachecaId == i)
+//                    colori.add(t.Colore);
+//            }
+//            result.add(colori);
+//        }
+//        return result;
+//    }
 
-    public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, int indexBacheca) throws SQLException {
+    public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, String nomeBacheca) throws SQLException {
 //        System.out.println(nomeToDo + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + indexBacheca);
 
         String hex = String.format("#%02x%02x%02x",
@@ -268,7 +270,7 @@ public class Controller {
                 coloreScelto.getGreen(),
                 coloreScelto.getBlue());
 
-        String query = "UPDATE TODO SET titolo = ?, descrizione = ?, datadiscadenza = ?, URL = ?, coloreSfondo = ?, completato = ? WHERE autore = ? AND numeroBacheca = ? AND titolo = ?;";
+        String query = "UPDATE TODO SET titolo = ?, descrizione = ?, datadiscadenza = ?, URL = ?, coloreSfondo = ?, completato = ? WHERE autore = ? AND nomeBacheca = ? AND titolo = ?;";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, newNome);
         ps.setString(2, descrizione);
@@ -278,7 +280,7 @@ public class Controller {
         ps.setString(5, hex);
         ps.setBoolean(6, completato);
         ps.setString(7, utenteLoggato);
-        ps.setInt(8, indexBacheca);
+        ps.setString(8, nomeBacheca);
         ps.setString(9, oldNome);
         ps.executeUpdate();
         ps.close();
@@ -289,20 +291,32 @@ public class Controller {
 
     }
 
-    public void addBacheca(int index) throws SQLException{
-        String[] titoli = {"Università", "Lavoro", "Tempo Libero"};
-        String titolo = titoli[index];
+    public void addBacheca(int scelta) throws SQLException{
+        String[] titoli = {"Università", "Tempo Libero", "Lavoro"};
+        String titolo = titoli[scelta];
 
-        String query = "INSERT INTO BACHECA(titolo, numeroBacheca, owner) VALUES(?, ?, ?)";
+        String query = "INSERT INTO BACHECA(titolo, owner) VALUES(?, ?)";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, titolo);
-        ps.setInt(2, index);
-        ps.setString(3, utenteLoggato);
+        ps.setString(2, utenteLoggato);
 
         ps.executeUpdate();
         ps.close();
 
         Bacheche = getBacheche();
+        ToDos = getToDo();
+    }
+
+    public void removeBacheca(String nomeBacheca) throws SQLException {
+        String query = "DELETE FROM BACHECA WHERE OWNER = ? AND titolo = ?";
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, utenteLoggato);
+        ps.setString(2, nomeBacheca);
+        ps.executeUpdate();
+        ps.close();
+
+        Bacheche = getBacheche();
+        ToDos = getToDo();
     }
 
 

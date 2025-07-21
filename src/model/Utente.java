@@ -11,14 +11,14 @@ public class Utente {
     public Utente(String nomeRegistrazione, String passwordRegistrazione){
         nome = nomeRegistrazione;
         password = passwordRegistrazione;
-        bacheche.add(new Bacheca("Università", 0,"Bacheca università"));
-        bacheche.add(new Bacheca("Lavoro", 1, "Bacheca lavoro"));
-        bacheche.add(new Bacheca("Tempo libero", 2, "Bacheca tempo libero"));
+        bacheche.add(new Bacheca("Università","Bacheca università"));
+        bacheche.add(new Bacheca("Lavoro", "Bacheca lavoro"));
+        bacheche.add(new Bacheca("Tempo libero", "Bacheca tempo libero"));
 
     }
     public void createBacheca(String titoloBacheca, String descrizioneBacheca, titoloBacheca tipoBacheca){
         if(bacheche.size() < 3)
-            bacheche.add(new Bacheca(titoloBacheca, bacheche.size(),descrizioneBacheca));
+            bacheche.add(new Bacheca(titoloBacheca, descrizioneBacheca));
         else
             System.out.println("Limite raggiunto");
     }

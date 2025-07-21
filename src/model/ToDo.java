@@ -13,13 +13,13 @@ public class ToDo {
     public String Colore;
     String Immagine;
     public boolean completato = false;
-    public int bachecaId;
+    public String nomeBacheca;
     Scanner scanner = new Scanner(System.in);
 
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
     ArrayList<String> utentiAssociati = new ArrayList<String>();
 
-    public ToDo(String titoloIniziale, String descrizioneIniziale, Date data, String url, String image,String Color, boolean completato, int bachecaId){
+    public ToDo(String titoloIniziale, String descrizioneIniziale, Date data, String url, String image,String Color, boolean completato, String nomeBacheca){
         titolo = titoloIniziale;
         descrizione = descrizioneIniziale;
         dataDiScadenza = data;
@@ -27,7 +27,7 @@ public class ToDo {
         Immagine = image;
         Colore = Color;
         this.completato = completato;
-        this.bachecaId = bachecaId;
+        this.nomeBacheca = nomeBacheca;
     }
 
     public ArrayList<String> getUtenti(){

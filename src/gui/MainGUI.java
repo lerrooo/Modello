@@ -12,22 +12,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MainGUI {
+
     private JPanel MainGUIPanel;
-    private JButton button1;
-    private JPanel JPanelTodo1;
     public static JFrame frame;
     private static Controller controller;
-    private static final JPanel[] BachecheJPanel = new JPanel[3];
-    private static final JPanel[] CenterJPanel = new JPanel[3];
-    private static final JLabel[] TitoliList = new JLabel[3];
-    private static final JButton[] removeButtons = new JButton[3];
-    private static final ArrayList<JButton> ButtonsList = new ArrayList<>();
-
-    private static JPanel centerPanelsContainer;
+    private static final ArrayList<JPanel> BachecheJPanel = new ArrayList<>();
 
     public MainGUI(JFrame frameChiamante, Controller controller) {
         MainGUI.controller = controller;
 
+        //Creazione finestra principale
         frame = new JFrame("Interfaccia principale");
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,98 +40,92 @@ public class MainGUI {
         topBar.add(menuButton);
         frame.add(topBar, BorderLayout.NORTH);
 
-        // Container centrale con le bacheche
-        centerPanelsContainer = new JPanel(new GridLayout(1, 3));
-        frame.add(centerPanelsContainer, BorderLayout.CENTER);
+        JPanel centerPanelContainer = new JPanel(new GridLayout(1, 3));
+        frame.add(centerPanelContainer, BorderLayout.CENTER);
 
-        // Inizializza bacheche esistenti
+        //Prendiamo tutti i titoli delle bacheche dal DB
+        ArrayList<String> titoliBacheche = controller.getTitoliBacheche();
 
-        ArrayList<Integer> indici = new ArrayList<>(controller.getPosizioniBacheche());
-
-        for (int i = 0; i < indici.size(); i++) {
-            System.out.println(indici.get(i));
-            centerPanelsContainer.add(createPanelWithButton(i));
+        //Per ogni titolo creiamo una bacheca (JPanel)
+        for(String titolo : titoliBacheche){
+            centerPanelContainer.add(createBachecaPanel(titolo));
         }
-
         coloraPanels();
 
-        //AGGIUNTA DEI TODO BOTTONI
-        ArrayList<ArrayList<String>> tuttiTitoli = controller.getTuttiTitoliToDo();
-        ArrayList<ArrayList<String>> tuttiColori = controller.getTuttiColoriToDo();
+        //Impostiamo visibile la finestra
+        frame.setVisible(true);
 
-        for (int i = 0; i < tuttiTitoli.size(); i++) {
-            ArrayList<String> titoliBacheca = tuttiTitoli.get(i);
-            ArrayList<String> coloriBacheca = tuttiColori.get(i);
+        //Aggiungiamo i ToDo
+        ArrayList<ArrayList<String>> titoliToDo = controller.getTuttiTitoliToDo();
 
-            for (int j = 0; j < titoliBacheca.size(); j++) {
-                String titolo = titoliBacheca.get(j);
-                String coloreHex = coloriBacheca.get(j);
-
-                addToDo(titolo, coloreHex, i);
+        for(int i = 0; i < titoliToDo.size(); i++){
+            for(String titolo : titoliToDo.get(i)){
+                System.out.println(titolo + " " + titoliBacheche.get(i));
+                addToDo(titolo, null, titoliBacheche.get(i));
             }
         }
 
-
-        // Aggiungi nuova bacheca al click sui tre puntini (qui però ha senso solo se fai bacheche dinamiche)
         menuButton.addActionListener(e -> {
-            for (int i = 0; i < BachecheJPanel.length; i++) {
-                if (BachecheJPanel[i] == null) {
-                    try {
-                        controller.addBacheca(i);
-                        JPanel panel = createPanelWithButton(i);
-                        BachecheJPanel[i] = panel;
+            String[] opzioni = {"Università", "Tempo Libero", "Lavoro"};
 
-                        refreshCenterPanels(); // aggiorna la UI con la nuova bacheca al posto giusto
-                        coloraPanels();
-                        resizeLayout();
+            int scelta = JOptionPane.showOptionDialog(
+                    null,
+                    "Scegli il tipo di bacheca da creare:",
+                    "Nuova Bacheca",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opzioni,
+                    opzioni[0]  // opzione di default selezionata
+            );
+            try{
 
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                BachecheJPanel.clear();
 
+                controller.addBacheca(scelta);
+                centerPanelContainer.removeAll();
 
-                    break;  // aggiungi una sola bacheca alla volta
+                ArrayList<String> titoliBachecheNEW = controller.getTitoliBacheche();
+
+                for (String titolo : titoliBachecheNEW) {
+                    centerPanelContainer.add(createBachecaPanel(titolo));
                 }
+
+                centerPanelContainer.revalidate();
+                centerPanelContainer.repaint();
+
+                coloraPanels();
+
+            }catch (Exception ex)
+            {
+                System.out.println(ex.getMessage());
             }
         });
 
 
-
-        frame.setVisible(true);
-
-        // Resize responsivo
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                resizeLayout();
-            }
-        });
-        frame.addWindowStateListener(e -> resizeLayout());
     }
+    private JPanel createBachecaPanel(String nomeBacheca){
+        JPanel bachecaJPanel = new JPanel(new BorderLayout());
+        bachecaJPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-    private JPanel createPanelWithButton(int index) {
-
-
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
+        //Top panel con il titolo
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setOpaque(false);
-//        if(controller.getTitoliBacheche().get(index) == null)
-//            return null;
-        JLabel titolo = new JLabel(controller.getTitoliBacheche().get(index));
+
+        JLabel titolo = new JLabel(nomeBacheca);
+        titolo.setName("titolo");
+        titolo.putClientProperty("id", "titolo");
+
         titolo.setHorizontalAlignment(SwingConstants.CENTER);
         titolo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        TitoliList[index] = titolo;
 
         JPanel buttonsRow = new JPanel(new BorderLayout());
         JButton removeButton = new JButton("x");
-        JButton searchButton = new JButton("+ Cerca");
-        removeButtons[index] = removeButton;
+        removeButton.setName("removeButton");
 
         removeButton.addActionListener(e -> {
-            Container parent = mainPanel.getParent();
+            Container parent = bachecaJPanel.getParent();
             if (parent != null) {
 
                 int risposta = JOptionPane.showConfirmDialog(
@@ -151,13 +139,15 @@ public class MainGUI {
 
                 if(risposta == JOptionPane.OK_OPTION){
                     //controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
-                    controller.eliminaBacheca();
-                    parent.remove(mainPanel);
-                    BachecheJPanel[index] = null;
-                    CenterJPanel[index] = null;
-                    TitoliList[index] = null;
-                    removeButtons[index] = null;
-                    resizeLayout();
+                    try {
+                        controller.removeBacheca(titolo.getText());
+
+                        parent.remove(bachecaJPanel);
+
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
                     parent.revalidate();
                     parent.repaint();
 
@@ -167,6 +157,8 @@ public class MainGUI {
             }
         });
 
+        JButton searchButton = new JButton("+ Cerca");
+
         buttonsRow.add(searchButton, BorderLayout.WEST);
         buttonsRow.add(removeButton, BorderLayout.EAST);
         buttonsRow.setOpaque(false);
@@ -175,13 +167,14 @@ public class MainGUI {
         topPanel.add(Box.createVerticalStrut(5));
         topPanel.add(buttonsRow);
 
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setOpaque(false);
+        JPanel toDoPanel = new JPanel();
+        toDoPanel.setLayout(new BoxLayout(toDoPanel, BoxLayout.Y_AXIS));
+        toDoPanel.setName("toDoPanel");
+        toDoPanel.setOpaque(false);
 
         JButton plusButton = new JButton("+ Aggiungi ToDo");
-        plusButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        plusButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         plusButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -190,99 +183,70 @@ public class MainGUI {
                 //inserire check per unique al nome di bacheca
                 if(nomeTemp == null || nomeTemp.trim().isEmpty()){
                     JOptionPane.showMessageDialog(null, "inserimento fallito");
-                return;
+                    return;
                 }
 
                 String descTemp = JOptionPane.showInputDialog(null, "Inserire descrizione ToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
                 if(descTemp == null || descTemp.trim().isEmpty()){
                     JOptionPane.showMessageDialog(null, "inserimento fallito");
-                return;
+                    return;
                 }
 
                 try {
-                    addToDo(nomeTemp, null, index);
-                    controller.addToDoDB(nomeTemp, index, descTemp);
+                    controller.addToDoDB(nomeTemp, titolo.getText(), descTemp);
+                    addToDo(nomeTemp, null, titolo.getText());
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
 
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        mainPanel.add(plusButton, BorderLayout.SOUTH);
+        bachecaJPanel.add(topPanel, BorderLayout.NORTH);
+        bachecaJPanel.add(toDoPanel, BorderLayout.CENTER);
+        bachecaJPanel.add(plusButton, BorderLayout.SOUTH);
 
-        BachecheJPanel[index] = mainPanel;
-        CenterJPanel[index] = centerPanel;
-
-        return mainPanel;
+        BachecheJPanel.add(bachecaJPanel);
+        return bachecaJPanel;
     }
 
     private static void coloraPanels() {
-        for (int i = 0; i < BachecheJPanel.length; i++) {
-            JPanel panel = BachecheJPanel[i];
-            JLabel titolo = TitoliList[i];
-            if (panel == null || titolo == null) continue;
-
-            switch (i % 3) {
-                case 0 -> {
-                    panel.setBackground(Color.decode("#5FBB97"));
-                    titolo.setForeground(Color.white);
-                }
-                case 1 -> {
-                    panel.setBackground(Color.decode("#8DDCA4"));
-                    titolo.setForeground(Color.decode("#72235b"));
-                }
-                case 2 -> {
-                    panel.setBackground(Color.decode("#63326e"));
-                    titolo.setForeground(Color.decode("#9ccd91"));
-                }
-            }
-        }
-    }
-
-    private static void resizeLayout() {
-        boolean hasPanels = false;
-        for (JPanel p : BachecheJPanel) {
-            if (p != null) {
-                hasPanels = true;
-                break;
-            }
-        }
-        if (!hasPanels) return;
-
-        // Prendo il primo panel non null come riferimento
-        JPanel firstPanel = null;
-        for (JPanel p : BachecheJPanel) {
-            if (p != null) {
-                firstPanel = p;
-                break;
-            }
-        }
-        if (firstPanel == null) return;
-
-        for (JLabel titolo : TitoliList) {
-            if (titolo != null) {
-                titolo.setPreferredSize(new Dimension((int) (firstPanel.getWidth() * 0.90), 50));
-            }
-        }
-        for (JButton bottone : ButtonsList) {
-            Dimension newSize = new Dimension((int) (firstPanel.getWidth() * 0.90), 50);
-            bottone.setPreferredSize(newSize);
-            bottone.setMinimumSize(newSize);
-            bottone.setMaximumSize(newSize);
-        }
         for (JPanel panel : BachecheJPanel) {
-            if (panel != null)
-                refreshAllComponents(panel);
+            JLabel lbl = (JLabel) findComponentByName(panel, "titolo");
+            if (lbl != null) {
+                switch (lbl.getText()) {
+                    case "Università" -> {
+                        panel.setBackground(Color.decode("#5FBB97"));
+                        lbl.setForeground(Color.white);
+                    }
+                    case "Lavoro" -> {
+                        panel.setBackground(Color.decode("#8DDCA4"));
+                        lbl.setForeground(Color.decode("#72235b"));
+                    }
+                    case "Tempo Libero" -> {
+                        panel.setBackground(Color.decode("#63326e"));
+                        lbl.setForeground(Color.decode("#9ccd91"));
+                    }
+                }
+            }
         }
     }
 
-    private static void addToDo(String nomeTodo, String Colore, int indexBacheca) {
-        if (indexBacheca < 0 || indexBacheca >= CenterJPanel.length) return;
-        if (CenterJPanel[indexBacheca] == null) return;
+    private static Component findComponentByName(Container container, String name) {
+        for (Component c : container.getComponents()) {
+            if (name.equals(c.getName())) {
+                return c;
+            }
+            if (c instanceof Container) {
+                Component child = findComponentByName((Container) c, name);
+                if (child != null) return child;
+            }
+        }
+        return null;
+    }
 
+    private static void addToDo(String nomeTodo, String Colore, String nomeBacheca) {
         JButton newButton = new JButton(nomeTodo);
+
         if(Colore == null)
             newButton.setBackground(Color.white);
         else{
@@ -290,85 +254,43 @@ public class MainGUI {
             newButton.setForeground(coloreComplementare(Color.decode(Colore)));
         }
 
+        for (JPanel panel : BachecheJPanel) {
+            JLabel lbl = (JLabel) findComponentByName(panel, "titolo");
+            if(lbl != null && lbl.getText().equals(nomeBacheca)){
 
-        newButton.addActionListener(new ActionListener() {
+                JPanel toDoPanel = (JPanel) findComponentByName(panel, "toDoPanel");
+
+                if(toDoPanel != null)
+                    toDoPanel.add(newButton);
+
+                Dimension fixedSize = new Dimension((int)(BachecheJPanel.getFirst().getWidth() * 0.90), 50);
+
+                newButton.setPreferredSize(fixedSize);
+                newButton.setMinimumSize(fixedSize);
+                newButton.setMaximumSize(fixedSize);
+
+                newButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                newButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+                newButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         try {
-                            ToDoGUI guiToDo = new ToDoGUI(CenterJPanel[indexBacheca], newButton, nomeTodo, indexBacheca, controller);
+                            ToDoGUI guiToDo = new ToDoGUI(toDoPanel, newButton, nomeTodo, nomeBacheca, controller);
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
                         ToDoGUI.frameTodo.setVisible(true);
                     }
                 });
-        // Prendo primo panel non nullo come riferimento per larghezza
-        JPanel firstPanel = null;
-        for (JPanel p : BachecheJPanel) {
-            if (p != null) {
-                firstPanel = p;
-                break;
+
+
             }
         }
 
-        Dimension fixedSize = new Dimension((int)(BachecheJPanel[0].getWidth() * 0.90), 50);
-
-        newButton.setPreferredSize(fixedSize);
-        newButton.setMinimumSize(fixedSize);
-        newButton.setMaximumSize(fixedSize);
-
-        newButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        newButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        ButtonsList.add(newButton);
-
-        JPanel container = new JPanel(new BorderLayout());
-        container.setOpaque(false);
-        container.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-        container.add(newButton, BorderLayout.CENTER);
-        newButton.putClientProperty("container", container);
-
-        CenterJPanel[indexBacheca].add(container);
-        CenterJPanel[indexBacheca].revalidate();
-        CenterJPanel[indexBacheca].repaint();
     }
 
-    private void refreshCenterPanels() {
-        centerPanelsContainer.removeAll();
-
-        // Conta bacheche effettive
-        int countNonNull = 0;
-        for (JPanel p : BachecheJPanel) {
-            if (p != null) countNonNull++;
-        }
-
-        // Se nessuna bacheca, almeno una colonna per non sfasare layout (opzionale)
-        if (countNonNull == 0) countNonNull = 1;
-
-        centerPanelsContainer.setLayout(new GridLayout(1, countNonNull));
-
-        for (JPanel p : BachecheJPanel) {
-            if (p != null) {
-                centerPanelsContainer.add(p);
-            }
-        }
-
-        centerPanelsContainer.revalidate();
-        centerPanelsContainer.repaint();
-    }
-
-
-
-    static void refreshAllComponents(Container container) {
-        container.revalidate();
-        container.repaint();
-        for (Component comp : container.getComponents()) {
-            if (comp instanceof Container child) {
-                refreshAllComponents(child);
-            }
-        }
-    }
-
-    public static Color coloreComplementare(Color colore) {
+    private static Color coloreComplementare(Color colore) {
 
         if(colore == null)
             return Color.WHITE;
