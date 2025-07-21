@@ -1,12 +1,15 @@
 package gui;
 
 import Controller.Controller;
-import model.ToDo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.sql.Date;
+import java.util.ArrayList;
+
 
 public class ToDoGUI {
     private JPanel ToDoPanel;
@@ -23,23 +26,34 @@ public class ToDoGUI {
     static JFrame frameTodo;
     Color coloreScelto;
 
-    public static void main(String[] args){
-        JFrame frame = new JFrame("Modifica ToDo");
-        frameTodo = frame;
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setContentPane(new ToDoGUI(null,null, null, null, 0,0).ToDoPanel);
-        frame.setVisible(true);
-        frame.setResizable(false);
-    }
+//    public static void main(String[] args){
+//        JFrame frame = new JFrame("Modifica ToDo");
+//        frameTodo = frame;
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setSize(400, 400);
+//        frame.setContentPane(new ToDoGUI(null,null, null, 0,0).ToDoPanel);
+//        frame.setVisible(true);
+//        frame.setResizable(false);
+//    }
 
-    public ToDoGUI(JPanel currentPanel, JButton bottone, ToDo todoBottone, Controller controller, int indexBacheca, int indexToDo) {
-        todoLabel.setText(todoBottone.titolo);
-        descrizioneArea.setText(todoBottone.descrizione);
-        dataLabel.setText(String.valueOf(todoBottone.dataDiScadenza));
-        urlField.setText(ToDo.URL);
-        completatoRadioButton.setSelected(todoBottone.completato);
-        coloreScelto = bottone.getBackground();
+    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, int indexBacheca, Controller controller) throws SQLException {
+
+        ArrayList<String> caratteristiche = new ArrayList<String>();
+
+
+        caratteristiche = controller.getSingleToDoDB(nomeToDo, indexBacheca);
+
+//        if(descrizione == null)
+//            return;
+
+
+        todoLabel.setText(nomeToDo);
+        descrizioneArea.setText(caratteristiche.getFirst());
+        dataLabel.setText(String.valueOf(caratteristiche.get(1)));
+        urlField.setText(caratteristiche.get(2));
+        completatoRadioButton.setSelected("1".equals(caratteristiche.get(3)));
+
+        coloreScelto = todoBottone.getBackground();
 
         JFrame frame = new JFrame("Modifica ToDo");
         frameTodo = frame;
@@ -53,14 +67,11 @@ public class ToDoGUI {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                bottone.setText(todoLabel.getText());
-                bottone.setForeground(coloreComplementare(coloreScelto));
-                bottone.setBackground(coloreScelto);
-                todoBottone.titolo = todoLabel.getText();
-                todoBottone.descrizione = descrizioneArea.getText();
+//                todoBottone.setText(todoLabel.getText());
+//                todoBottone.setForeground(coloreComplementare(coloreScelto));
+//                todoBottone.setBackground(coloreScelto);
 //                todoBottone.dataDiScadenza = LocalDate.parse(dataLabel.getText());
-                ToDo.URL = urlField.getText();
-                todoBottone.completato = completatoRadioButton.isSelected();
+//                todoBottone.completato = completatoRadioButton.isSelected();
 
             }
         });
@@ -113,15 +124,34 @@ public class ToDoGUI {
                         "Conferma",
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE
+
                 );
 
                 if(risposta == JOptionPane.OK_OPTION){
                     //controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
-                    currentPanel.remove(bottone);
+                    currentPanel.remove(todoBottone);
                     currentPanel.revalidate();
                     currentPanel.repaint();
                     frameTodo.dispose();
                     
+                }
+            }
+        });
+
+        confermaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    controller.updateToDo(todoLabel.getText(), nomeToDo, descrizioneArea.getText(), dataLabel.getText(), urlField.getText(), coloreScelto, completatoRadioButton.isSelected(), indexBacheca);
+                    todoBottone.setText(todoLabel.getText());
+                    todoBottone.setForeground(coloreComplementare(coloreScelto));
+                    todoBottone.setBackground(coloreScelto);
+
+                    JOptionPane.showMessageDialog(frame,"Modifiche effettuate con successo");
+                    frameTodo.setVisible(false);
+                    frameTodo.dispose();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });

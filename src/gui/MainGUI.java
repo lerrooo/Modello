@@ -1,18 +1,19 @@
 package gui;
 
 import Controller.Controller;
+import org.postgresql.jdbc2.ArrayAssistant;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MainGUI {
     private JPanel MainGUIPanel;
     private JButton button1;
-    private JButton addTodo1;
     private JPanel JPanelTodo1;
     public static JFrame frame;
     private static Controller controller;
@@ -50,29 +51,50 @@ public class MainGUI {
         frame.add(centerPanelsContainer, BorderLayout.CENTER);
 
         // Inizializza bacheche esistenti
-        for (int i = 0; i < 3; i++) {
+
+        ArrayList<Integer> indici = new ArrayList<>(controller.getPosizioniBacheche());
+
+        for (int i = 0; i < indici.size(); i++) {
+            System.out.println(indici.get(i));
             centerPanelsContainer.add(createPanelWithButton(i));
         }
 
         coloraPanels();
 
+        //AGGIUNTA DEI TODO BOTTONI
         ArrayList<ArrayList<String>> tuttiTitoli = controller.getTuttiTitoliToDo();
+        ArrayList<ArrayList<String>> tuttiColori = controller.getTuttiColoriToDo();
+
         for (int i = 0; i < tuttiTitoli.size(); i++) {
-            for (String titolo : tuttiTitoli.get(i)) {
-                addToDo(titolo, i);
+            ArrayList<String> titoliBacheca = tuttiTitoli.get(i);
+            ArrayList<String> coloriBacheca = tuttiColori.get(i);
+
+            for (int j = 0; j < titoliBacheca.size(); j++) {
+                String titolo = titoliBacheca.get(j);
+                String coloreHex = coloriBacheca.get(j);
+
+                addToDo(titolo, coloreHex, i);
             }
         }
+
 
         // Aggiungi nuova bacheca al click sui tre puntini (qui però ha senso solo se fai bacheche dinamiche)
         menuButton.addActionListener(e -> {
             for (int i = 0; i < BachecheJPanel.length; i++) {
                 if (BachecheJPanel[i] == null) {
-                    JPanel panel = createPanelWithButton(i);
-                    BachecheJPanel[i] = panel;
+                    try {
+                        controller.addBacheca(i);
+                        JPanel panel = createPanelWithButton(i);
+                        BachecheJPanel[i] = panel;
 
-                    refreshCenterPanels(); // aggiorna la UI con la nuova bacheca al posto giusto
-                    coloraPanels();
-                    resizeLayout();
+                        refreshCenterPanels(); // aggiorna la UI con la nuova bacheca al posto giusto
+                        coloraPanels();
+                        resizeLayout();
+
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
 
                     break;  // aggiungi una sola bacheca alla volta
                 }
@@ -94,13 +116,16 @@ public class MainGUI {
     }
 
     private JPanel createPanelWithButton(int index) {
+
+
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setOpaque(false);
-
+//        if(controller.getTitoliBacheche().get(index) == null)
+//            return null;
         JLabel titolo = new JLabel(controller.getTitoliBacheche().get(index));
         titolo.setHorizontalAlignment(SwingConstants.CENTER);
         titolo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -114,15 +139,31 @@ public class MainGUI {
         removeButton.addActionListener(e -> {
             Container parent = mainPanel.getParent();
             if (parent != null) {
-                parent.remove(mainPanel);
 
-                BachecheJPanel[index] = null;
-                CenterJPanel[index] = null;
-                TitoliList[index] = null;
-                removeButtons[index] = null;
-                resizeLayout();
-                parent.revalidate();
-                parent.repaint();
+                int risposta = JOptionPane.showConfirmDialog(
+                        null,
+                        "Sei sicuro di voler procedere? La bacheca e i ToDo verranno eliminati",
+                        "Conferma",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+
+                );
+
+                if(risposta == JOptionPane.OK_OPTION){
+                    //controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
+                    controller.eliminaBacheca();
+                    parent.remove(mainPanel);
+                    BachecheJPanel[index] = null;
+                    CenterJPanel[index] = null;
+                    TitoliList[index] = null;
+                    removeButtons[index] = null;
+                    resizeLayout();
+                    parent.revalidate();
+                    parent.repaint();
+
+                }
+
+
             }
         });
 
@@ -159,7 +200,7 @@ public class MainGUI {
                 }
 
                 try {
-                    addToDo(nomeTemp, index);
+                    addToDo(nomeTemp, null, index);
                     controller.addToDoDB(nomeTemp, index, descTemp);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
@@ -237,20 +278,30 @@ public class MainGUI {
         }
     }
 
-    private static void addToDo(String nomeTodo, int indexBacheca) {
+    private static void addToDo(String nomeTodo, String Colore, int indexBacheca) {
         if (indexBacheca < 0 || indexBacheca >= CenterJPanel.length) return;
         if (CenterJPanel[indexBacheca] == null) return;
 
         JButton newButton = new JButton(nomeTodo);
-        newButton.setBackground(Color.white);
-//        newButton.addActionListener(new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        int indexToDo = utenteLoggato.bacheche.get(indexBacheca).findToDoIndex(newButton.getText());
-//                        ToDoGUI guiToDo = new ToDoGUI(BachecheJPanel.get(indexBacheca), newButton, tempToDo, controller, indexBacheca, indexToDo);
-//                        ToDoGUI.frameTodo.setVisible(true);
-//                    }
-//                });
+        if(Colore == null)
+            newButton.setBackground(Color.white);
+        else{
+            newButton.setBackground(Color.decode(Colore));
+            newButton.setForeground(coloreComplementare(Color.decode(Colore)));
+        }
+
+
+        newButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            ToDoGUI guiToDo = new ToDoGUI(CenterJPanel[indexBacheca], newButton, nomeTodo, indexBacheca, controller);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        ToDoGUI.frameTodo.setVisible(true);
+                    }
+                });
         // Prendo primo panel non nullo come riferimento per larghezza
         JPanel firstPanel = null;
         for (JPanel p : BachecheJPanel) {
@@ -259,7 +310,6 @@ public class MainGUI {
                 break;
             }
         }
-        int widthRef = (firstPanel != null) ? firstPanel.getWidth() : 200;
 
         Dimension fixedSize = new Dimension((int)(BachecheJPanel[0].getWidth() * 0.90), 50);
 
@@ -316,5 +366,16 @@ public class MainGUI {
                 refreshAllComponents(child);
             }
         }
+    }
+
+    public static Color coloreComplementare(Color colore) {
+
+        if(colore == null)
+            return Color.WHITE;
+
+        int complementoRosso = 255 - colore.getRed();
+        int complementoVerde = 255 - colore.getGreen();
+        int complementoBlu = 255 - colore.getBlue();
+        return new Color(complementoRosso, complementoVerde, complementoBlu);
     }
 }
