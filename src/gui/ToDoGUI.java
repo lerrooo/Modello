@@ -26,6 +26,8 @@ public class ToDoGUI {
     static JFrame frameTodo;
     Color coloreScelto;
 
+
+
 //    public static void main(String[] args){
 //        JFrame frame = new JFrame("Modifica ToDo");
 //        frameTodo = frame;
@@ -38,20 +40,17 @@ public class ToDoGUI {
 
     public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, String nomeBacheca, Controller controller) throws SQLException {
 
-        ArrayList<String> caratteristiche = new ArrayList<String>();
+        ArrayList<String> caratteristiche = controller.getSingleToDoDB(nomeToDo, nomeBacheca);
 
-
-        caratteristiche = controller.getSingleToDoDB(nomeToDo, nomeBacheca);
-
-//        if(descrizione == null)
-//            return;
+//        for(String s : caratteristiche)
+//            System.out.println(s);
 
 
         todoLabel.setText(nomeToDo);
         descrizioneArea.setText(caratteristiche.getFirst());
         dataLabel.setText(String.valueOf(caratteristiche.get(1)));
         urlField.setText(caratteristiche.get(2));
-        completatoRadioButton.setSelected("1".equals(caratteristiche.get(3)));
+        completatoRadioButton.setSelected("true".equals(caratteristiche.get(4)));
 
         coloreScelto = todoBottone.getBackground();
 
@@ -142,8 +141,10 @@ public class ToDoGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    todoBottone.setName(todoLabel.getText());
                     controller.updateToDo(todoLabel.getText(), nomeToDo, descrizioneArea.getText(), dataLabel.getText(), urlField.getText(), coloreScelto, completatoRadioButton.isSelected(), nomeBacheca);
                     todoBottone.setText(todoLabel.getText());
+
                     todoBottone.setForeground(coloreComplementare(coloreScelto));
                     todoBottone.setBackground(coloreScelto);
 

@@ -3,18 +3,12 @@ package Controller;
 import DAO.DatabaseConnection;
 import model.Bacheca;
 import model.ToDo;
-import model.Utente;
 
-import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
-import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.sql.Date;
 
 import static DAO.DatabaseConnection.connection;
@@ -90,7 +84,7 @@ public class Controller {
             String titolo = rs.getString("Titolo");
             String descrizione = rs.getString("Descrizione");
 
-            System.out.println("Bacheca: " + titolo + ", numero: " + ", owner: " + utenteLoggato + ", descrizione: " + descrizione);
+            //System.out.println("Bacheca: " + titolo + ", numero: " + ", owner: " + utenteLoggato + ", descrizione: " + descrizione);
 
 
             bacheche.add(new Bacheca(titolo, descrizione));
@@ -106,7 +100,7 @@ public class Controller {
 
     public ArrayList<ToDo> getToDo() throws SQLException {
 
-        ArrayList<ToDo> TodoArr = new ArrayList<ToDo>();
+        ArrayList<ToDo> TodoArr = new ArrayList<>();
 
         String query = "SELECT * FROM ToDo WHERE Autore = ? ORDER BY ordine";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -124,8 +118,8 @@ public class Controller {
             boolean completato = rs.getBoolean("completato");
             String nomeBacheca = rs.getString("nomeBacheca");
 
-            System.out.println(titolo + " " + descrizione + " " + dataDiScadenza + " "
-                    + url + " " + image + " " + Color + " " + completato + " " + nomeBacheca);
+            //System.out.println(titolo + " " + descrizione + " " + dataDiScadenza + " "
+             //       + url + " " + image + " " + Color + " " + completato + " " + nomeBacheca);
 
             TodoArr.add(new ToDo(titolo, descrizione, dataDiScadenza, url, image, Color, completato, nomeBacheca));
 
@@ -140,7 +134,7 @@ public class Controller {
 
     public ArrayList<String> getSingleToDoDB(String nomeToDo, String nomeBacheca) throws SQLException {
 
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
 
         String descrizione;
         String dataDiScadenza;
@@ -170,8 +164,6 @@ public class Controller {
             result.add(url);
             result.add(color);
             result.add(String.valueOf(completato));
-
-            System.out.println(dataDiScadenza);
 
         }
 
@@ -205,14 +197,6 @@ public class Controller {
             titoli.add(b.getTitolo());
         }
         return titoli;
-    }
-
-    public boolean getExistsBacheca(int index){
-        for (Bacheca b : Bacheche) {
-            if(b.getNumeroBacheca() == index)
-                return true;
-        }
-        return false;
     }
 
     // Ritorna descrizioni delle bacheche (opzionale)
@@ -249,21 +233,22 @@ public class Controller {
         return result;
     }
 
-//    public ArrayList<ArrayList<String>> getTuttiColoriToDo() {
-//        ArrayList<ArrayList<String>> result = new ArrayList<>();
-//        for (int i = 0; i < Bacheche.size(); i++) {
-//            ArrayList<String> colori = new ArrayList<>();
-//            for (ToDo t : ToDos) {
-//                if(t.bachecaId == i)
-//                    colori.add(t.Colore);
-//            }
-//            result.add(colori);
-//        }
-//        return result;
-//    }
+    public ArrayList<ArrayList<String>> getTuttiColoriToDo() {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        for (int i = 0; i < Bacheche.size(); i++) {
+            ArrayList<String> colori = new ArrayList<>();
+            for (ToDo t : ToDos) {
+                if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
+                    colori.add(t.Colore);
+            }
+            result.add(colori);
+        }
+        return result;
+    }
 
     public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, String nomeBacheca) throws SQLException {
-//        System.out.println(nomeToDo + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + indexBacheca);
+        System.out.println(oldNome + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + nomeBacheca);
+        System.out.println(newNome + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + nomeBacheca);
 
         String hex = String.format("#%02x%02x%02x",
                 coloreScelto.getRed(),
@@ -276,7 +261,6 @@ public class Controller {
         ps.setString(2, descrizione);
         ps.setDate(3, Date.valueOf(dataDiScadenza));
         ps.setString(4, url);
-        System.out.println(hex);
         ps.setString(5, hex);
         ps.setBoolean(6, completato);
         ps.setString(7, utenteLoggato);
@@ -284,6 +268,8 @@ public class Controller {
         ps.setString(9, oldNome);
         ps.executeUpdate();
         ps.close();
+
+        ToDos = getToDo();
 
     }
 
@@ -319,6 +305,74 @@ public class Controller {
         ToDos = getToDo();
     }
 
+    public boolean cercaToDo(String nomeBacheca, String nomeToDo){
+
+        for(ToDo t : ToDos){
+            if(t.getTitolo().equals(nomeToDo) && t.nomeBacheca.equals(nomeBacheca)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void spostaToDo(String nomeBacheca1, String nomeToDo, String nomeBacheca2) throws SQLException {
+
+        String query = "SELECT moveToDoToNewBacheca(?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, nomeToDo);
+        ps.setString(2, utenteLoggato);
+        ps.setString(3, nomeBacheca1);
+        ps.setString(4, nomeBacheca2);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            boolean risultato = rs.getBoolean(1);
+            if (risultato) {
+                System.out.println("ToDo spostato con successo!");
+            } else {
+                System.out.println("ToDo non trovato o errore nello spostamento.");
+            }
+        }
+
+        rs.close();
+        ps.close();
+
+
+        ToDos = getToDo();
+
+
+    }
+
+
+    public void swapToDoOrder(String nomeBacheca, String nomeToDo, int nuovoOrdine) throws SQLException {
+
+        String query = "SELECT swapToDoOrder(?, ?, ?, ?);";
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, nomeBacheca);
+        ps.setString(2, utenteLoggato);
+        ps.setString(3, nomeToDo);
+        ps.setInt(4, nuovoOrdine);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            boolean risultato = rs.getBoolean(1);
+            if (risultato) {
+                System.out.println("ToDo spostato con successo!");
+            } else {
+                System.out.println("ToDo non trovato o errore nello spostamento.");
+            }
+        }
+
+        rs.close();
+        ps.close();
+
+
+        ToDos = getToDo();
+
+    }
 
 //    public Controller() throws SQLException {
 //        Bacheche = getBacheche();

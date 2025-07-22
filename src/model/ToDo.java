@@ -14,6 +14,8 @@ public class ToDo {
     String Immagine;
     public boolean completato = false;
     public String nomeBacheca;
+
+
     Scanner scanner = new Scanner(System.in);
 
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro

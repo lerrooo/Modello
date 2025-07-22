@@ -17,6 +17,7 @@ public class MainGUI {
     public static JFrame frame;
     private static Controller controller;
     private static final ArrayList<JPanel> BachecheJPanel = new ArrayList<>();
+    JPanel centerPanelContainer = new JPanel(new GridLayout(1, 3));
 
     public MainGUI(JFrame frameChiamante, Controller controller) {
         MainGUI.controller = controller;
@@ -40,35 +41,91 @@ public class MainGUI {
         topBar.add(menuButton);
         frame.add(topBar, BorderLayout.NORTH);
 
-        JPanel centerPanelContainer = new JPanel(new GridLayout(1, 3));
+
         frame.add(centerPanelContainer, BorderLayout.CENTER);
 
-        //Prendiamo tutti i titoli delle bacheche dal DB
-        ArrayList<String> titoliBacheche = controller.getTitoliBacheche();
+//        //Prendiamo tutti i titoli delle bacheche dal DB
+//        ArrayList<String> titoliBacheche = controller.getTitoliBacheche();
+//
+//        //Per ogni titolo creiamo una bacheca (JPanel)
+//        for(String titolo : titoliBacheche){
+//            centerPanelContainer.add(createBachecaPanel(titolo));
+//        }
+//
+//        coloraPanels();
+//
+//        //Aggiungiamo i ToDo
+//        ArrayList<ArrayList<String>> titoliToDo = controller.getTuttiTitoliToDo();
+//
+//        for(int i = 0; i < titoliToDo.size(); i++){
+//            for(String titolo : titoliToDo.get(i)){
+//                System.out.println(titolo + " " + titoliBacheche.get(i));
+//                addToDo(titolo, null, titoliBacheche.get(i));
+//            }
+//        }
 
-        //Per ogni titolo creiamo una bacheca (JPanel)
-        for(String titolo : titoliBacheche){
-            centerPanelContainer.add(createBachecaPanel(titolo));
-        }
+        buildPanels(centerPanelContainer);
         coloraPanels();
 
-        //Impostiamo visibile la finestra
-        frame.setVisible(true);
+        // Crea il popup menu
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem aggiungiBachecaItem = new JMenuItem("Aggiungi bacheca");
+        JMenuItem spostaToDoItem = new JMenuItem("Sposta ToDo in una nuova bacheca");
+        popupMenu.add(aggiungiBachecaItem);
+        popupMenu.add(spostaToDoItem);
 
-        //Aggiungiamo i ToDo
-        ArrayList<ArrayList<String>> titoliToDo = controller.getTuttiTitoliToDo();
+        //Action listeners del menù
+        aggiungiBachecaItem.addActionListener(e -> {
+                    String[] opzioni = {"Università", "Tempo Libero", "Lavoro"};
 
-        for(int i = 0; i < titoliToDo.size(); i++){
-            for(String titolo : titoliToDo.get(i)){
-                System.out.println(titolo + " " + titoliBacheche.get(i));
-                addToDo(titolo, null, titoliBacheche.get(i));
-            }
-        }
+                    int scelta = JOptionPane.showOptionDialog(
+                            null,
+                            "Scegli il tipo di bacheca da creare:",
+                            "Nuova Bacheca",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            opzioni,
+                            opzioni[0]
+                    );
+                    try{
+                        controller.addBacheca(scelta);
+                        buildPanels(centerPanelContainer);
+                        coloraPanels();
 
-        menuButton.addActionListener(e -> {
-            String[] opzioni = {"Università", "Tempo Libero", "Lavoro"};
+                    }catch (Exception ex)
+                    {
+                        System.out.println(ex.getMessage());
+                    }
+                });
+        spostaToDoItem.addActionListener(e -> {
+
+            ArrayList<String> titoli = controller.getTitoliBacheche();
+
+            String[] opzioni = titoli.toArray(new String[0]);
 
             int scelta = JOptionPane.showOptionDialog(
+                    null,
+                    "Scegli il tipo di bacheca da cui spostare il ToDo:",
+                    "Sposta il ToDo",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opzioni,
+                    opzioni[0]
+            );
+
+            if(scelta == -1)
+                return;
+
+            String nomeBacheca1 = opzioni[scelta];
+            titoli.remove(nomeBacheca1);
+
+            String nomeToDo = JOptionPane.showInputDialog("Inserisci il nome del ToDo");
+
+            opzioni = titoli.toArray(new String[0]);
+
+            scelta = JOptionPane.showOptionDialog(
                     null,
                     "Scegli il tipo di bacheca da creare:",
                     "Nuova Bacheca",
@@ -76,30 +133,25 @@ public class MainGUI {
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     opzioni,
-                    opzioni[0]  // opzione di default selezionata
+                    opzioni[0]
             );
-            try{
 
-                BachecheJPanel.clear();
+            String nomeBacheca2 = opzioni[scelta];
 
-                controller.addBacheca(scelta);
-                centerPanelContainer.removeAll();
-
-                ArrayList<String> titoliBachecheNEW = controller.getTitoliBacheche();
-
-                for (String titolo : titoliBachecheNEW) {
-                    centerPanelContainer.add(createBachecaPanel(titolo));
-                }
-
-                centerPanelContainer.revalidate();
-                centerPanelContainer.repaint();
-
+            try {
+                controller.spostaToDo(nomeBacheca1, nomeToDo, nomeBacheca2);
+                buildPanels(centerPanelContainer);
                 coloraPanels();
-
-            }catch (Exception ex)
-            {
-                System.out.println(ex.getMessage());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
+
+        });
+
+
+        menuButton.addActionListener(e -> {
+            popupMenu.show(menuButton, 0, menuButton.getHeight());
+
         });
 
 
@@ -159,6 +211,8 @@ public class MainGUI {
 
         JButton searchButton = new JButton("+ Cerca");
 
+
+
         buttonsRow.add(searchButton, BorderLayout.WEST);
         buttonsRow.add(removeButton, BorderLayout.EAST);
         buttonsRow.setOpaque(false);
@@ -205,6 +259,34 @@ public class MainGUI {
         bachecaJPanel.add(toDoPanel, BorderLayout.CENTER);
         bachecaJPanel.add(plusButton, BorderLayout.SOUTH);
 
+
+        searchButton.addActionListener(e -> {
+            String search = JOptionPane.showInputDialog(
+                    null,
+                    "Inserisci il nome del ToDo da cercare nella bacheca " + titolo.getText(),
+                    "Cerca ToDo", // <-- Questo è il titolo della finestra
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if(controller.cercaToDo(titolo.getText(), search)){
+
+                try {
+                    JButton toDoButton = (JButton) findComponentByName(toDoPanel, search);
+
+                    if(toDoButton == null)
+                        return;
+
+                    ToDoGUI guiToDo = new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else {
+                JOptionPane.showMessageDialog(frame, "Nessun ToDo trovato con il nome " + search);
+            }
+
+
+        });
+
         BachecheJPanel.add(bachecaJPanel);
         return bachecaJPanel;
     }
@@ -244,8 +326,54 @@ public class MainGUI {
         return null;
     }
 
-    private static void addToDo(String nomeTodo, String Colore, String nomeBacheca) {
+    private static ArrayList<JButton> findAllButtons(Container container) {
+        ArrayList<JButton> buttons = new ArrayList<>();
+
+        for (Component c : container.getComponents()) {
+            if (c instanceof JButton) {
+                buttons.add((JButton) c);
+            }
+
+            if (c instanceof Container) {
+                buttons.addAll(findAllButtons((Container) c));
+            }
+        }
+
+        return buttons;
+    }
+
+    private void buildPanels(JPanel centerPanelContainer){
+        BachecheJPanel.clear();
+        centerPanelContainer.removeAll();
+
+        //Prendiamo tutti i titoli delle bacheche dal DB
+        ArrayList<String> titoliBacheche = controller.getTitoliBacheche();
+
+        //Per ogni titolo creiamo una bacheca (JPanel)
+        for(String titolo : titoliBacheche){
+            centerPanelContainer.add(createBachecaPanel(titolo));
+        }
+
+        frame.setVisible(true);
+
+        //Aggiungiamo i ToDo
+        ArrayList<ArrayList<String>> titoliToDo = controller.getTuttiTitoliToDo();
+        ArrayList<ArrayList<String>> coloriToDo = controller.getTuttiColoriToDo();
+
+        //i == contatore delle bacheche, j == contatore dei todo
+        for(int i = 0; i < titoliToDo.size(); i++){
+            for(int j = 0; j < titoliToDo.get(i).size(); j++){
+
+                addToDo(titoliToDo.get(i).get(j), coloriToDo.get(i).get(j), titoliBacheche.get(i));
+
+            }
+        }
+    }
+
+    private void addToDo(String nomeTodo, String Colore, String nomeBacheca) {
+
         JButton newButton = new JButton(nomeTodo);
+        newButton.setName(nomeTodo);
 
         if(Colore == null)
             newButton.setBackground(Color.white);
@@ -260,29 +388,109 @@ public class MainGUI {
 
                 JPanel toDoPanel = (JPanel) findComponentByName(panel, "toDoPanel");
 
-                if(toDoPanel != null)
-                    toDoPanel.add(newButton);
+                if(toDoPanel != null){
 
-                Dimension fixedSize = new Dimension((int)(BachecheJPanel.getFirst().getWidth() * 0.90), 50);
+                    Dimension fixedSize = new Dimension((int)(BachecheJPanel.getFirst().getWidth() * 0.90), 50);
 
-                newButton.setPreferredSize(fixedSize);
-                newButton.setMinimumSize(fixedSize);
-                newButton.setMaximumSize(fixedSize);
+                    newButton.setPreferredSize(fixedSize);
+                    newButton.setMinimumSize(fixedSize);
+                    newButton.setMaximumSize(fixedSize);
 
-                newButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                newButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+                    newButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    toDoPanel.add(Box.createVerticalStrut(20)); // spazio verticale di 20px
+                    //System.out.println("bottone creato");
 
-                newButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ToDoGUI guiToDo = new ToDoGUI(toDoPanel, newButton, nomeTodo, nomeBacheca, controller);
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
+                    final boolean[] isDragging = {false};
+                    //apre l'interfaccia del todo quando clicchi
+                    newButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+
+                            if(isDragging[0])
+                                return;
+
+                            try {
+                                ToDoGUI guiToDo = new ToDoGUI(toDoPanel, newButton, newButton.getText(), nomeBacheca, controller);
+
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            ToDoGUI.frameTodo.setVisible(true);
                         }
-                        ToDoGUI.frameTodo.setVisible(true);
-                    }
-                });
+                    });
+
+                    // Coordinate relative per il drag
+                    final Point[] offset = {new Point()};
+                    final int startY = newButton.getY();
+
+                    //trascinamento
+                    newButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            // Registra la posizione relativa del mouse rispetto al bottone
+                            offset[0].y = e.getY();
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+
+                            if(!isDragging[0])
+                                return;
+
+                            isDragging[0] = false;
+                            // Centro verticale del bottone rilasciato
+                            int centerY = newButton.getY() + newButton.getHeight() / 2;
+
+                            // Trova tutti gli altri bottoni nel pannello (escludendo il trascinato)
+                            ArrayList<JButton> todoButtonsArr = findAllButtons(toDoPanel);
+                            todoButtonsArr.remove(newButton);
+
+                            // Trova la posizione in cui dovrebbe essere inserito
+                            int insertIndex = 1;
+
+                            for (int i = 0; i < todoButtonsArr.size(); i++) {
+                                JButton other = todoButtonsArr.get(i);
+                                int otherCenterY = other.getY() + other.getHeight() / 2;
+
+                                // Se il centro del bottone rilasciato è sopra il centro di questo bottone,
+                                // allora va inserito prima di lui
+                                if (centerY < otherCenterY) {
+                                    insertIndex = i + 1;
+                                    break;
+                                }
+
+                                // Altrimenti continua e lo inseriamo dopo tutti
+                                insertIndex = i + 2;
+                            }
+
+                            try {
+                                controller.swapToDoOrder(nomeBacheca, newButton.getText(), insertIndex);
+                                buildPanels(centerPanelContainer);
+                                coloraPanels();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+
+                            System.out.println("Nuova posizione logica: " + insertIndex);
+                        }
+
+                    });
+
+                    newButton.addMouseMotionListener(new MouseMotionAdapter() {
+                        @Override
+                        public void mouseDragged(MouseEvent e) {
+                            // Nuova posizione del bottone in base al movimento del mouse
+                            isDragging[0] = true;
+                            int newY = newButton.getY() + e.getY() - offset[0].y;
+                            newButton.setLocation(newButton.getX(), newY);
+                        }
+                    });
+
+
+                    toDoPanel.add(newButton);
+                    toDoPanel.revalidate();
+                    toDoPanel.repaint();
+                }
 
 
             }
@@ -300,4 +508,6 @@ public class MainGUI {
         int complementoBlu = 255 - colore.getBlue();
         return new Color(complementoRosso, complementoVerde, complementoBlu);
     }
+
+
 }
