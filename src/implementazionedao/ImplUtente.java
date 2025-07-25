@@ -26,7 +26,7 @@ public class ImplUtente implements UtenteDao {
      * Effettua il login di un utente al DB
      * @param nomeUtente nome dell'utente
      * @param password password dell'utente
-     * @returns ritorna null se non trova nessun utente, oppure il nome dell'utente in caso contrario
+     * @return ritorna null se non trova nessun utente, oppure il nome dell'utente in caso contrario
      **/
     @Override
     public String loginUtente(String nomeUtente, char[] password) throws SQLException {

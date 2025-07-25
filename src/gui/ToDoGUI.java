@@ -129,7 +129,17 @@ public class ToDoGUI {
                 try {
 
                     LocalDate today = LocalDate.now();
-                    LocalDate labelDate = LocalDate.parse(dataLabel.getText()); // formato già corretto
+                    LocalDate labelDate = null;
+                    try{
+                        labelDate = LocalDate.parse(dataLabel.getText());
+                    }catch (Exception _){
+                        JOptionPane.showMessageDialog(null, "Errore nell'inserimento, verifica i dati!");
+                    }
+
+                     // formato già corretto
+
+                    if(labelDate == null)
+                        return;
 
                     if (!labelDate.isAfter(today)) { // cioè: se è oggi o una data passata
                         coloreScelto = Color.RED;
@@ -149,6 +159,7 @@ public class ToDoGUI {
                     frameTodo.dispose();
                 } catch (SQLException _) {
                     //Catch block
+
                 }
         });
     }

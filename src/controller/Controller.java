@@ -59,9 +59,6 @@ public class Controller {
             getBachecheFromDB();
             return true;
         }
-
-
-
         return false;
     }
     /**
@@ -131,10 +128,6 @@ public class Controller {
             toDos.add(todo);
         }
         return toDos;
-    }
-
-    public ArrayList<String> getSingleToDoDB(String nomeToDo, String nomeBacheca) throws SQLException {
-        return tDAO.getSingleToDoDB(nomeToDo, nomeBacheca, utenteLoggato);
     }
     /**
      * Prende un singolo ToDo

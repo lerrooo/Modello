@@ -341,6 +341,8 @@ public class MainGUI {
                 try {
                     controller.addToDoDB(nomeTemp, titolo.getText(), descTemp);
                     addToDo(nomeTemp, null, titolo.getText());
+                    buildPanels(centerPanelContainer);
+                    coloraPanels();
                 } catch (SQLException _) {
                     //Catch block
                 }

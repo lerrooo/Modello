@@ -224,7 +224,6 @@ public class ImplToDo implements ToDoDao {
         ps.close();
 
         if(righeModificate <= 0){
-
             String query1 = "SELECT todoautorenome FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND destinatario = ?";
             ps = getInstance().prepareStatement(query1);
             ps.setString(1, oldNome);
@@ -244,10 +243,9 @@ public class ImplToDo implements ToDoDao {
             ps.setString(1, oldNome);
             ps.setString(2, nomeBacheca);
             ps.setString(3, autore);
-            ps.setString(3, utenteLoggato);
+            ps.setString(4, utenteLoggato);
             ps.executeUpdate();
             ps.close();
-
 
             String query3 = "UPDATE TODO SET titolo = ?, descrizione = ?, datadiscadenza = ?, URL = ?, coloreSfondo = ?, completato = ? WHERE autore = ? AND nomeBacheca = ? AND titolo = ?;";
             ps = getInstance().prepareStatement(query3);
@@ -264,7 +262,6 @@ public class ImplToDo implements ToDoDao {
             ps.close();
 
             aggiungiCondivisione(nomeBacheca, newNome, autore, utenteLoggato);
-
 
 
         }
