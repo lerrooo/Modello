@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class ToDo {
-    public static String URL = "";
+    public String URL = "";
     public String titolo;
     public Date dataDiScadenza;
     public String descrizione;

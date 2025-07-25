@@ -1,7 +1,6 @@
 package gui;
 
 import Controller.Controller;
-import org.postgresql.jdbc2.ArrayAssistant;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -44,26 +43,6 @@ public class MainGUI {
 
         frame.add(centerPanelContainer, BorderLayout.CENTER);
 
-//        //Prendiamo tutti i titoli delle bacheche dal DB
-//        ArrayList<String> titoliBacheche = controller.getTitoliBacheche();
-//
-//        //Per ogni titolo creiamo una bacheca (JPanel)
-//        for(String titolo : titoliBacheche){
-//            centerPanelContainer.add(createBachecaPanel(titolo));
-//        }
-//
-//        coloraPanels();
-//
-//        //Aggiungiamo i ToDo
-//        ArrayList<ArrayList<String>> titoliToDo = controller.getTuttiTitoliToDo();
-//
-//        for(int i = 0; i < titoliToDo.size(); i++){
-//            for(String titolo : titoliToDo.get(i)){
-//                System.out.println(titolo + " " + titoliBacheche.get(i));
-//                addToDo(titolo, null, titoliBacheche.get(i));
-//            }
-//        }
-
         buildPanels(centerPanelContainer);
         coloraPanels();
 
@@ -71,8 +50,12 @@ public class MainGUI {
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem aggiungiBachecaItem = new JMenuItem("Aggiungi bacheca");
         JMenuItem spostaToDoItem = new JMenuItem("Sposta ToDo in una nuova bacheca");
+        JMenuItem aggiungiCondivisioneItem = new JMenuItem("Aggiungi condivisione");
+        JMenuItem visualizzaCondivisioneItem = new JMenuItem("Visualizza condivisioni");
         popupMenu.add(aggiungiBachecaItem);
         popupMenu.add(spostaToDoItem);
+        popupMenu.add(aggiungiCondivisioneItem);
+        popupMenu.add(visualizzaCondivisioneItem);
 
         //Action listeners del menù
         aggiungiBachecaItem.addActionListener(e -> {
@@ -147,7 +130,45 @@ public class MainGUI {
             }
 
         });
+        aggiungiCondivisioneItem.addActionListener(e -> {
 
+            ArrayList<String> titoli = controller.getTitoliBacheche();
+
+            String[] opzioni = titoli.toArray(new String[0]);
+
+            int scelta = JOptionPane.showOptionDialog(
+                    null,
+                    "Scegli il tipo di bacheca da cui condividere il ToDo:",
+                    "Sposta il ToDo",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opzioni,
+                    opzioni[0]
+            );
+
+            if(scelta == -1)
+                return;
+
+            String nomeBacheca1 = opzioni[scelta];
+
+            String nomeToDo = JOptionPane.showInputDialog("Inserisci il nome del ToDo");
+            String destinatario = JOptionPane.showInputDialog("Inserisci il nome dell'utente con cui condividere il ToDo");
+            try {
+                controller.aggiungiCondivisione(nomeBacheca1, nomeToDo, destinatario);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
+        visualizzaCondivisioneItem.addActionListener(e -> {
+            try {
+                ToDoCondivisi toDoCondivisi = new ToDoCondivisi(controller);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
 
         menuButton.addActionListener(e -> {
             popupMenu.show(menuButton, 0, menuButton.getHeight());
@@ -210,8 +231,6 @@ public class MainGUI {
         });
 
         JButton searchButton = new JButton("+ Cerca");
-
-
 
         buttonsRow.add(searchButton, BorderLayout.WEST);
         buttonsRow.add(removeButton, BorderLayout.EAST);
@@ -276,7 +295,7 @@ public class MainGUI {
                     if(toDoButton == null)
                         return;
 
-                    ToDoGUI guiToDo = new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller);
+                    ToDoGUI guiToDo = new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller, controller.autoreToDo(nomeBacheca, titolo.getText()));
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -366,6 +385,7 @@ public class MainGUI {
 
                 addToDo(titoliToDo.get(i).get(j), coloriToDo.get(i).get(j), titoliBacheche.get(i));
 
+
             }
         }
     }
@@ -401,6 +421,7 @@ public class MainGUI {
                     //System.out.println("bottone creato");
 
                     final boolean[] isDragging = {false};
+                    final boolean[] isYours = {true};
                     //apre l'interfaccia del todo quando clicchi
                     newButton.addActionListener(new ActionListener() {
                         @Override
@@ -410,8 +431,7 @@ public class MainGUI {
                                 return;
 
                             try {
-                                ToDoGUI guiToDo = new ToDoGUI(toDoPanel, newButton, newButton.getText(), nomeBacheca, controller);
-
+                                ToDoGUI guiToDo = new ToDoGUI(toDoPanel, newButton, newButton.getText(), nomeBacheca, controller, isYours[0]);
                             } catch (SQLException ex) {
                                 throw new RuntimeException(ex);
                             }
@@ -421,46 +441,49 @@ public class MainGUI {
 
                     // Coordinate relative per il drag
                     final Point[] offset = {new Point()};
-                    final int startY = newButton.getY();
 
                     //trascinamento
                     newButton.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
+                            if(!isYours[0])
+                                return;
                             // Registra la posizione relativa del mouse rispetto al bottone
                             offset[0].y = e.getY();
                         }
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
+                            if (!isYours[0])
+                                return;
 
-                            if(!isDragging[0])
+                            if (!isDragging[0])
                                 return;
 
                             isDragging[0] = false;
-                            // Centro verticale del bottone rilasciato
-                            int centerY = newButton.getY() + newButton.getHeight() / 2;
 
-                            // Trova tutti gli altri bottoni nel pannello (escludendo il trascinato)
+                            // Top Y del bottone rilasciato (senza centro)
+                            int buttonTopY = newButton.getY();
+
+                            // Trova tutti i bottoni trascinabili (escludi quelli fissi tipo "condividi", ecc.)
                             ArrayList<JButton> todoButtonsArr = findAllButtons(toDoPanel);
-                            todoButtonsArr.remove(newButton);
+                            todoButtonsArr.remove(newButton); // rimuove se stesso
 
-                            // Trova la posizione in cui dovrebbe essere inserito
-                            int insertIndex = 1;
+                            // Applichiamo solo ai bottoni trascinabili
+//                            todoButtonsArr.removeIf(b -> !isDraggable(b));
+
+                            // Trova la nuova posizione
+                            int insertIndex = 0;
 
                             for (int i = 0; i < todoButtonsArr.size(); i++) {
                                 JButton other = todoButtonsArr.get(i);
-                                int otherCenterY = other.getY() + other.getHeight() / 2;
 
-                                // Se il centro del bottone rilasciato è sopra il centro di questo bottone,
-                                // allora va inserito prima di lui
-                                if (centerY < otherCenterY) {
-                                    insertIndex = i + 1;
+                                if (buttonTopY < other.getY()) {
+                                    insertIndex = i + 1; // lo mettiamo subito prima
                                     break;
                                 }
 
-                                // Altrimenti continua e lo inseriamo dopo tutti
-                                insertIndex = i + 2;
+                                insertIndex = i + 2; // altrimenti dopo tutti
                             }
 
                             try {
@@ -474,11 +497,14 @@ public class MainGUI {
                             System.out.println("Nuova posizione logica: " + insertIndex);
                         }
 
+
                     });
 
                     newButton.addMouseMotionListener(new MouseMotionAdapter() {
                         @Override
                         public void mouseDragged(MouseEvent e) {
+                            if(!isYours[0])
+                                return;
                             // Nuova posizione del bottone in base al movimento del mouse
                             isDragging[0] = true;
                             int newY = newButton.getY() + e.getY() - offset[0].y;
@@ -486,6 +512,21 @@ public class MainGUI {
                         }
                     });
 
+
+                    try{
+                        if(!controller.autoreToDo(nomeBacheca, newButton.getText())){
+                            isYours[0] = false;
+                            System.out.println("Trovato todo non tuo " + newButton.getText());
+                            // Separatore
+                            JSeparator separator = new JSeparator();
+                            separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10)); // lo estende orizzontalmente
+                            toDoPanel.add(separator);
+                            toDoPanel.add(Box.createVerticalStrut(20)); // spazio verticale di 20px
+
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
                     toDoPanel.add(newButton);
                     toDoPanel.revalidate();

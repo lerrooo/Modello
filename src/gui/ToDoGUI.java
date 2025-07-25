@@ -7,9 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.sql.Date;
 import java.util.ArrayList;
-
 
 public class ToDoGUI {
     private JPanel ToDoPanel;
@@ -27,30 +25,15 @@ public class ToDoGUI {
     Color coloreScelto;
 
 
+    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, String nomeBacheca, Controller controller, boolean isYours) throws SQLException {
 
-//    public static void main(String[] args){
-//        JFrame frame = new JFrame("Modifica ToDo");
-//        frameTodo = frame;
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setSize(400, 400);
-//        frame.setContentPane(new ToDoGUI(null,null, null, 0,0).ToDoPanel);
-//        frame.setVisible(true);
-//        frame.setResizable(false);
-//    }
-
-    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, String nomeBacheca, Controller controller) throws SQLException {
-
-        ArrayList<String> caratteristiche = controller.getSingleToDoDB(nomeToDo, nomeBacheca);
-
-//        for(String s : caratteristiche)
-//            System.out.println(s);
-
+        ArrayList<String> caratteristiche = controller.getSingleToDo(nomeToDo, nomeBacheca);
 
         todoLabel.setText(nomeToDo);
         descrizioneArea.setText(caratteristiche.getFirst());
         dataLabel.setText(String.valueOf(caratteristiche.get(1)));
         urlField.setText(caratteristiche.get(2));
-        completatoRadioButton.setSelected("true".equals(caratteristiche.get(4)));
+        completatoRadioButton.setSelected("true".equals(caratteristiche.get(3)));
 
         coloreScelto = todoBottone.getBackground();
 
@@ -62,18 +45,6 @@ public class ToDoGUI {
         frame.setContentPane(ToDoPanel);
         frame.setVisible(true);
         frame.setResizable(false);
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-//                todoBottone.setText(todoLabel.getText());
-//                todoBottone.setForeground(coloreComplementare(coloreScelto));
-//                todoBottone.setBackground(coloreScelto);
-//                todoBottone.dataDiScadenza = LocalDate.parse(dataLabel.getText());
-//                todoBottone.completato = completatoRadioButton.isSelected();
-
-            }
-        });
 
         coloreButton.addActionListener(new ActionListener() {
             @Override
@@ -117,23 +88,54 @@ public class ToDoGUI {
         eliminaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int risposta = JOptionPane.showConfirmDialog(
-                        null,
-                        "Sei sicuro di voler procedere?",
-                        "Conferma",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
 
-                );
+                if(isYours){
+                    int risposta = JOptionPane.showConfirmDialog(
+                            null,
+                            "Sei sicuro di voler procedere?",
+                            "Conferma",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
 
-                if(risposta == JOptionPane.OK_OPTION){
-                    //controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
-                    currentPanel.remove(todoBottone);
-                    currentPanel.revalidate();
-                    currentPanel.repaint();
-                    frameTodo.dispose();
-                    
+                    );
+
+                    if(risposta == JOptionPane.OK_OPTION){
+                        try {
+                            controller.removeToDo(nomeBacheca, nomeToDo);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        currentPanel.remove(todoBottone);
+                        currentPanel.revalidate();
+                        currentPanel.repaint();
+                        frameTodo.dispose();
+
+                    }
+                }else{
+                    int risposta = JOptionPane.showConfirmDialog(
+                            null,
+                            "Rimuovere la condivisione?",
+                            "Conferma",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+
+                    );
+
+                    if(risposta == JOptionPane.OK_OPTION){
+                        try {
+                            controller.removeCondivisione(nomeBacheca, nomeToDo);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        currentPanel.remove(todoBottone);
+                        currentPanel.revalidate();
+                        currentPanel.repaint();
+                        frameTodo.dispose();
+
+                    }
                 }
+
+
             }
         });
 
@@ -141,9 +143,19 @@ public class ToDoGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+
+                    LocalDate today = LocalDate.now();
+                    LocalDate labelDate = LocalDate.parse(dataLabel.getText()); // formato già corretto
+
+                    if (!labelDate.isAfter(today)) { // cioè: se è oggi o una data passata
+                        coloreScelto = Color.RED;
+                    }
+
                     todoBottone.setName(todoLabel.getText());
-                    controller.updateToDo(todoLabel.getText(), nomeToDo, descrizioneArea.getText(), dataLabel.getText(), urlField.getText(), coloreScelto, completatoRadioButton.isSelected(), nomeBacheca);
+                    controller.updateToDo(todoLabel.getText(), nomeToDo, descrizioneArea.getText(), dataLabel.getText(), urlField.getText(),
+                            coloreScelto, completatoRadioButton.isSelected(), nomeBacheca);
                     todoBottone.setText(todoLabel.getText());
+
 
                     todoBottone.setForeground(coloreComplementare(coloreScelto));
                     todoBottone.setBackground(coloreScelto);

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Controller {
-    private utenteDao uDAO;
-    private bachecaDao bDAO;
-    private toDoDao tDAO;
+    private final utenteDao uDAO;
+    private final bachecaDao bDAO;
+    private final toDoDao tDAO;
 
     private DatabaseConnection dbConnection = new DatabaseConnection();
     private ArrayList<Bacheca> Bacheche = new ArrayList<Bacheca>();
@@ -76,7 +76,7 @@ public class Controller {
         for(int i = 0; i < bachecheInfo.getFirst().size(); i++){
             Bacheche.add(new Bacheca(bachecheInfo.get(0).get(i), bachecheInfo.get(1).get(i)));
         }
-
+        getToDoFromDB();
         return Bacheche;
     }
 
@@ -127,9 +127,25 @@ public class Controller {
         return tDAO.getSingleToDoDB(nomeToDo, nomeBacheca, utenteLoggato);
     }
 
+    public ArrayList<String> getSingleToDo(String nomeToDo, String nomeBacheca) throws SQLException {
+        ArrayList<String> caratteristiche = new ArrayList<>();
+        for(ToDo t : ToDos)
+            if(t.nomeBacheca.equals(nomeBacheca) && t.titolo.equals(nomeToDo)){
+                caratteristiche.add(t.descrizione);
+                caratteristiche.add(String.valueOf(t.dataDiScadenza));
+                caratteristiche.add(t.URL);
+                caratteristiche.add(String.valueOf(t.completato));
+
+                return caratteristiche;
+            }
+
+        return null;
+    }
+
 
     public void addToDoDB(String nomeToDo, String nomeBacheca, String descrizione) throws SQLException {
         tDAO.addToDoDB(nomeToDo, nomeBacheca , descrizione, utenteLoggato);
+        getToDoFromDB();
     }
 
     // Ritorna lista titoli delle bacheche
@@ -190,6 +206,7 @@ public class Controller {
 
     public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, String nomeBacheca) throws SQLException {
        tDAO.updateToDo(newNome, oldNome, descrizione, dataDiScadenza, url, coloreScelto, completato, nomeBacheca, utenteLoggato);
+        getToDoFromDB();
     }
 
 
@@ -215,12 +232,46 @@ public class Controller {
 
     public void spostaToDo(String nomeBacheca1, String nomeToDo, String nomeBacheca2) throws SQLException {
         tDAO.spostaToDo(nomeBacheca1, nomeToDo, nomeBacheca2, utenteLoggato);
-
+        getToDoFromDB();
     }
 
 
     public void swapToDoOrder(String nomeBacheca, String nomeToDo, int nuovoOrdine) throws SQLException {
         tDAO.swapToDoOrder(nomeBacheca, nomeToDo, nuovoOrdine, utenteLoggato);
+        getToDoFromDB();
+    }
+
+    public boolean autoreToDo(String nomeBacheca, String nomeToDo) throws SQLException {
+       return tDAO.autoreToDo(nomeBacheca, nomeToDo, utenteLoggato);
+    }
+
+    public void aggiungiCondivisione(String nomeBacheca1, String nomeToDo, String destinatario) throws SQLException {
+        tDAO.aggiungiCondivisione(nomeBacheca1, nomeToDo, utenteLoggato, destinatario);
+
+    }
+
+    public void removeToDo(String nomeBacheca, String nomeToDo) throws SQLException {
+        tDAO.removeToDo(nomeBacheca, nomeToDo, utenteLoggato);
+        getToDoFromDB();
+
+    }
+
+    public void removeCondivisione(String nomeBacheca, String nomeToDo, String destinatario) throws SQLException {
+        tDAO.removeCondivisione(nomeBacheca, nomeToDo, utenteLoggato, destinatario);
+        getToDoFromDB();
+    }
+
+    public void removeCondivisione(String nomeBacheca, String nomeToDo) throws SQLException {
+        tDAO.removeCondivisione(nomeBacheca, nomeToDo, utenteLoggato);
+        getToDoFromDB();
+    }
+
+    public ArrayList<ArrayList<String>> getCondivisioni() throws SQLException {
+        ArrayList<ArrayList<String>> dati = new ArrayList<>();
+
+        tDAO.getCondivisioniFromDB(utenteLoggato, dati);
+
+        return dati;
     }
 
 //        public Controller() throws SQLException {
