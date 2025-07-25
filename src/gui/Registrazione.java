@@ -18,16 +18,10 @@ public class Registrazione {
     private JButton OK;
 
     JFrame regFrame;
-
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("Registrazione");
-//        frame.setContentPane(new Registrazione().RegistrazionePanel);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
-    public Registrazione(){}
-
+    /**
+     * @param frameChiamante Per riapire la schermata di login al termine
+     * @param controller per comunicare la registrazione al controller
+     **/
     public Registrazione(JFrame frameChiamante, Controller controller){
 
             frameLogin = frameChiamante;

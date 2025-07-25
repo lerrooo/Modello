@@ -20,6 +20,9 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Classe che si occupa gestire il funziomaneto programma collegando GUI a DB
+ */
 public class Controller {
     private final utenteDao uDAO;
     private final bachecaDao bDAO;
@@ -46,11 +49,22 @@ public class Controller {
         return utenteLoggato;
     }
 
-
+    /**
+     * Aggiunge un utente al DB
+     * @param NomeUtente nome dell'utente da aggiungere
+     * @param Password dell'utente da aggiungere, char[] per gestione della password
+     *
+     */
     public void addUtente(String NomeUtente, char[] Password) throws SQLException {
     uDAO.addUtente(NomeUtente, Password);
     }
-
+    /**
+     * Verifica il login di un utente al DB
+     * @param nomeUtente nome dell'utente
+     * @param password password dell'utente
+     * @return un flag booleano che indica se l'azione ha avuto successo o meno
+     *
+     */
     public boolean LoginUtente(String nomeUtente, char[] password) throws SQLException {
         utenteLoggato = uDAO.loginUtente(nomeUtente, password);
         System.out.println(utenteLoggato);
@@ -64,7 +78,10 @@ public class Controller {
 
         return false;
     }
-
+    /**
+     * Prende tutte le bacheche dal DB
+     * @return Arraylist di bacheche
+     */
     public ArrayList<Bacheca> getBachecheFromDB() throws SQLException {
         this.Bacheche = new ArrayList<>();
         ArrayList<ArrayList<String>> bachecheInfo = new ArrayList<>();
@@ -84,6 +101,10 @@ public class Controller {
         return Bacheche;
     }
 
+    /**
+     * Prende tutti i ToDO dal DB in base all'utente loggato
+     * @return Arraylist di ToDo
+     */
     public ArrayList<ToDo> getToDoFromDB() throws SQLException {
 //        ToDos = tDAO.getToDo();
         this.ToDos = new ArrayList<>();
@@ -130,6 +151,10 @@ public class Controller {
     public ArrayList<String> getSingleToDoDB(String nomeToDo, String nomeBacheca) throws SQLException {
         return tDAO.getSingleToDoDB(nomeToDo, nomeBacheca, utenteLoggato);
     }
+    /**
+     * Prende un singolo ToDo
+     * @return Array list di String delle caratteristiche del ToDo
+     */
 
     public ArrayList<String> getSingleToDo(String nomeToDo, String nomeBacheca) throws SQLException {
         ArrayList<String> caratteristiche = new ArrayList<>();
@@ -146,12 +171,18 @@ public class Controller {
         return null;
     }
 
-
+    /**
+     * Aggiunge un ToDo al DB
+     */
     public void addToDoDB(String nomeToDo, String nomeBacheca, String descrizione) throws SQLException {
         tDAO.addToDoDB(nomeToDo, nomeBacheca , descrizione, utenteLoggato);
         getToDoFromDB();
     }
 
+    /**
+     *
+     * @return Ritorna la lista dei titoli delle bacheche
+     */
     // Ritorna lista titoli delle bacheche
     public ArrayList<String> getTitoliBacheche() {
         ArrayList<String> titoli = new ArrayList<>();
@@ -161,25 +192,9 @@ public class Controller {
         return titoli;
     }
 
-    // Ritorna descrizioni delle bacheche (opzionale)
-    public ArrayList<String> getDescrizioniBacheche() {
-        ArrayList<String> descrizioni = new ArrayList<>();
-        for (Bacheca b : Bacheche) {
-            descrizioni.add(b.getDescrizione());
-        }
-        return descrizioni;
-    }
-
-    // Ritorna numeri bacheca (posizioni) delle bacheche
-    public ArrayList<Integer> getPosizioniBacheche() {
-        ArrayList<Integer> posizioni = new ArrayList<>();
-        for (Bacheca b : Bacheche) {
-            posizioni.add(b.getNumeroBacheca());
-        }
-        return posizioni;
-    }
-
-    // Ritorna lista di titoli ToDo per ogni bacheca (come lista di liste)
+    /**
+     * @return Ritorna la lista dei titoli dei ToDo (Un ArrayList a bacheca)
+     */
     public ArrayList<ArrayList<String>> getTuttiTitoliToDo() {
 
         ArrayList<ArrayList<String>> result = new ArrayList<>();
@@ -193,12 +208,6 @@ public class Controller {
                         titoli.add(t.getTitolo());
                 }else
                 {
-//                    System.out.println(t.dataDiScadenza + "   " + Filter);
-
-//                    if((String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter)))){
-//                        System.out.println("UGUALI!!");
-//                    }
-
                     if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter))))
                         titoli.add(t.getTitolo());
                 }
@@ -209,7 +218,9 @@ public class Controller {
         }
         return result;
     }
-
+    /**
+     * @return Ritorna la lista dei colori dei ToDo (Un ArrayList a bacheca)
+     */
     public ArrayList<ArrayList<String>> getTuttiColoriToDo() {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         for (int i = 0; i < Bacheche.size(); i++) {
@@ -234,23 +245,35 @@ public class Controller {
         }
         return result;
     }
-
+    /**
+     * Aggiorna un TodDo
+     * @param newNome il nuovo nome del ToDo
+     * @param oldNome utilizzato per effettuare l'update nel DB
+     * @param nomeBacheca utilizzata per individuare la bacheca da cui prendere il ToDo
+     */
     public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, String nomeBacheca) throws SQLException {
        tDAO.updateToDo(newNome, oldNome, descrizione, dataDiScadenza, url, coloreScelto, completato, nomeBacheca, utenteLoggato);
         getToDoFromDB();
     }
-
+    /**
+     * Aggiunge una bacheca nel DB
+     * @param scelta (0 = Università, 1 = Tempo Libero, 2 = Lavoro)
+     */
 
     public void addBacheca(int scelta) throws SQLException{
         bDAO.addBacheca(scelta, utenteLoggato);
         getBachecheFromDB();
     }
-
+    /**
+     * Rimuove una bacheca in base al nome
+     */
     public void removeBacheca(String nomeBacheca) throws SQLException {
        bDAO.removeBacheca(nomeBacheca, utenteLoggato);
        getBachecheFromDB();
     }
-
+    /**
+     * Cerca un ToDo in una bacheca
+     */
     public boolean cercaToDo(String nomeBacheca, String nomeToDo){
 
         for(ToDo t : ToDos){
@@ -260,43 +283,64 @@ public class Controller {
         }
         return false;
     }
-
+    /**
+     * Sposta un ToDo da un bacheca ad un'altra
+     * @param nomeBacheca1 La bacheca di partenza
+     * @param nomeBacheca2 La bacheca di nomeBacheca2
+     */
     public void spostaToDo(String nomeBacheca1, String nomeToDo, String nomeBacheca2) throws SQLException {
         tDAO.spostaToDo(nomeBacheca1, nomeToDo, nomeBacheca2, utenteLoggato);
         getToDoFromDB();
     }
 
-
+    /**
+     * Sposta un ToDo nella stessa bacheca
+     * @param nomeBacheca La bacheca da cui spostare
+     * @param nomeToDo Il ToDo da spostare
+     * @param nuovoOrdine Ordine del nuovo ToDO
+     * */
     public void swapToDoOrder(String nomeBacheca, String nomeToDo, int nuovoOrdine) throws SQLException {
         tDAO.swapToDoOrder(nomeBacheca, nomeToDo, nuovoOrdine, utenteLoggato);
         getToDoFromDB();
     }
-
+    /**
+     * Interroga il DB per controllare se l'utente loggato possiede o no un ToDO (utilizzato per le condivisioni)
+     **/
     public boolean autoreToDo(String nomeBacheca, String nomeToDo) throws SQLException {
        return tDAO.autoreToDo(nomeBacheca, nomeToDo, utenteLoggato);
     }
-
+    /**
+     * Aggiunge una condivisione al DB
+     **/
     public void aggiungiCondivisione(String nomeBacheca1, String nomeToDo, String destinatario) throws SQLException {
         tDAO.aggiungiCondivisione(nomeBacheca1, nomeToDo, utenteLoggato, destinatario);
 
     }
-
+    /**
+     * Rimuove un ToDo dal DB
+     **/
     public void removeToDo(String nomeBacheca, String nomeToDo) throws SQLException {
         tDAO.removeToDo(nomeBacheca, nomeToDo, utenteLoggato);
         getToDoFromDB();
 
     }
-
+    /**
+     * Rimuove una condivisione dal DB (4 parametri se si conosce il destinatario)
+     **/
     public void removeCondivisione(String nomeBacheca, String nomeToDo, String destinatario) throws SQLException {
         tDAO.removeCondivisione(nomeBacheca, nomeToDo, utenteLoggato, destinatario);
         getToDoFromDB();
     }
-
+    /**
+     * Rimuove una condivisione dal DB (3 parametri se non si conosce il destinatario)
+     **/
     public void removeCondivisione(String nomeBacheca, String nomeToDo) throws SQLException {
         tDAO.removeCondivisione(nomeBacheca, nomeToDo, utenteLoggato);
         getToDoFromDB();
     }
-
+    /**
+     * Ritorna per ogni bacheca le condivisioni dell'utente
+     **/
     public ArrayList<ArrayList<String>> getCondivisioni() throws SQLException {
         ArrayList<ArrayList<String>> dati = new ArrayList<>();
 
@@ -304,20 +348,18 @@ public class Controller {
 
         return dati;
     }
-
+    /**
+     * Imposta il filtro della data
+     **/
     public void setFiltro(Date data) {
         Filter = data;
     }
-
+    /**
+     * Imposta il filtro della data alla data odierna
+     **/
     public void setFiltro() {
         Filter = new Date(System.currentTimeMillis());
 
     }
 
-
-//        public Controller() throws SQLException {
-//        Bacheche = getBacheche();
-//        }
-//
-//
 }

@@ -10,7 +10,6 @@ public class Bacheca {
     public String titolo;
     public String descrizione;
     public int numeroBacheca;
-    public titoloBacheca tipoBacheca;
 
     public Bacheca(String titoloInserimento, String descrizioneInserimento){
         titolo = titoloInserimento;
@@ -31,7 +30,6 @@ public class Bacheca {
         this.titolo = nuovoTitolo;
     if(!nuovaDescrizione.isEmpty())
         this.descrizione = nuovaDescrizione;
-    this.tipoBacheca = nuovoTipoBacheca;
     }
 
     public int findToDoIndex(String titoloToDo){

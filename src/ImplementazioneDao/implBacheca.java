@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import static Database.DatabaseConnection.connection;
 
 public class implBacheca implements bachecaDao{
+    /**
+     * Utilizzato per prendere le informazioni delle bacheche dell'utente
+     * @param bachecheInfo le salva in un ArrayList di String (Ogni ArrayList equivale ad un bacheca)
+     * @param utenteLoggato l'utente che ha effettuato l'accesso
+     */
         public void getBacheche(ArrayList<ArrayList<String>> bachecheInfo, String utenteLoggato) throws SQLException {
         String query = "SELECT * FROM Bacheca WHERE Owner = ? ORDER BY titolo DESC";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -32,7 +37,11 @@ public class implBacheca implements bachecaDao{
         ps.close();
 
     }
-
+    /**
+     * Utilizzato per aggiungere una bacheca al DB
+     * @param scelta (0 = Università, 1 = Tempo Libero, 2 = Lavoro)
+     * @param utenteLoggato l'utente che ha effettuato l'accesso
+     */
     public void addBacheca(int scelta, String utenteLoggato) throws SQLException{
         String[] titoli = {"Università", "Tempo Libero", "Lavoro"};
         String titolo = titoli[scelta];
@@ -46,7 +55,11 @@ public class implBacheca implements bachecaDao{
         ps.close();
 
     }
-
+    /**
+     * Utilizzato per rimuovere una bacheca al DB
+     * @param nomeBacheca Il nome della bacheca da rimuovere
+     * @param utenteLoggato l'utente che ha effettuato l'accesso
+     */
     public void removeBacheca(String nomeBacheca, String utenteLoggato) throws SQLException {
         String query = "DELETE FROM BACHECA WHERE OWNER = ? AND titolo = ?";
         PreparedStatement ps = connection.prepareStatement(query);

@@ -11,7 +11,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
-
+/**
+ * Classe MainGUI che si occupa di creare l'interfaccia delle bacheche
+ */
 public class MainGUI {
 
 
@@ -20,6 +22,10 @@ public class MainGUI {
     private static Controller controller;
     private static final ArrayList<JPanel> BachecheJPanel = new ArrayList<>();
     JPanel centerPanelContainer = new JPanel(new GridLayout(1, 3));
+    /**
+     * Si occupa di creare tutta la GUI quando viene instanziata dal Login
+     *
+     */
 
     public MainGUI(JFrame frameChiamante, Controller controller) {
         MainGUI.controller = controller;
@@ -250,6 +256,9 @@ public class MainGUI {
         buildPanels(centerPanelContainer);
         coloraPanels();
     }
+    /**
+     * Crea la bacheca con il nome associato a @param nomeBacheca
+     **/
     private JPanel createBachecaPanel(String nomeBacheca){
         JPanel bachecaJPanel = new JPanel(new BorderLayout());
         bachecaJPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -384,7 +393,9 @@ public class MainGUI {
         BachecheJPanel.add(bachecaJPanel);
         return bachecaJPanel;
     }
-
+    /**
+     * Si occupa di colorare i pannelli (bacheche) in base al nome per varietà
+     **/
     private static void coloraPanels() {
         for (JPanel panel : BachecheJPanel) {
             JLabel lbl = (JLabel) findComponentByName(panel, "titolo");
@@ -406,7 +417,11 @@ public class MainGUI {
             }
         }
     }
-
+    /**
+     * Metodo utilizzato per trovare un componente
+     * @param name il nome del componente da cercare
+     * @param container l'istanza del container in cui cercare
+     */
     private static Component findComponentByName(Container container, String name) {
         for (Component c : container.getComponents()) {
             if (name.equals(c.getName())) {
@@ -419,7 +434,10 @@ public class MainGUI {
         }
         return null;
     }
-
+    /**
+     * Metodo che trova tutti i bottoni in un container
+     * @param container l'istanza del container in cui cercare
+     */
     private static ArrayList<JButton> findAllButtons(Container container) {
         ArrayList<JButton> buttons = new ArrayList<>();
 
@@ -435,7 +453,10 @@ public class MainGUI {
 
         return buttons;
     }
-
+    /**
+     * Costruisce tutti i pannelli (bacheche) nella gui
+     * @param centerPanelContainer l'istanza del container principale
+     */
     private void buildPanels(JPanel centerPanelContainer){
         BachecheJPanel.clear();
         centerPanelContainer.removeAll();
@@ -464,7 +485,12 @@ public class MainGUI {
             }
         }
     }
-
+    /**
+     * Aggiunge un ToDo alla bacheca e al Database con l'ultilizzo del controller
+     * @param nomeTodo Il nome del ToDo da aggiungere
+     * @param Colore Il colore del ToDo
+     * @param nomeBacheca Il nome della bacheca associata al ToDo
+     */
     private void addToDo(String nomeTodo, String Colore, String nomeBacheca) {
 
         JButton newButton = new JButton(nomeTodo);
@@ -613,7 +639,11 @@ public class MainGUI {
         }
 
     }
-
+    /**
+     * Un semplice metodo per trovare il colore complementare
+     * @param colore il colore da complementare
+     * @return colore complementare
+     */
     private static Color coloreComplementare(Color colore) {
 
         if(colore == null)

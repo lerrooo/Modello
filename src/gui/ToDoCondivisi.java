@@ -8,7 +8,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+/**
+ * Classe che si occupa della gestione della GUI dei ToDo condivisi
+ **/
 public class ToDoCondivisi {
 
     static JFrame frameTodo;
@@ -16,6 +18,10 @@ public class ToDoCondivisi {
     private JTable table;
     private JScrollPane ScrollPane;
 
+    /**
+     * @param controller permette di prendere tutti i ToDo dal DB ed elencarli
+     * Ogni condivisione è cliccabile ed eliminabile
+     **/
     public ToDoCondivisi(Controller controller) throws SQLException {
 
         ArrayList<ArrayList<String>> dati = controller.getCondivisioni();

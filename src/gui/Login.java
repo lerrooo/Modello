@@ -3,10 +3,12 @@ package gui;
 import Controller.Controller;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
-
+/**
+ * Si occupa della gestione della GUI del Login
+ * Utilizza i componenti del form per comunicare con il Controller
+ *
+ */
 public class Login {
     private final Controller controller;
     private static JFrame mainFrame;
@@ -19,8 +21,9 @@ public class Login {
     public static void main(String[] args) throws SQLException {
         showLogin();
     }
-
-    // Metodo statico per riaprire il login
+    /**
+     * Un metodo statico per riaprire il Login in seguito
+     */
     public static void showLogin() throws SQLException {
         JFrame frame = new JFrame("Login");
         frame.setContentPane(new Login().LoginPanel);
@@ -30,8 +33,10 @@ public class Login {
         frame.setSize(500, 300);
         mainFrame = frame;
     }
-
-    public Login() throws SQLException {
+    /**
+     * Costrutture della GUI che si occupa di creare il controller
+     */
+    public Login() {
         controller = new Controller();
 
         accediButton.addActionListener(e -> {

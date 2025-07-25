@@ -15,6 +15,21 @@ import static Database.DatabaseConnection.connection;
 
 public class implToDo implements toDoDao{
 
+    /**
+     * Prende i ToDo dal DB
+     *
+     * @param titoli Array List dei titoli
+     * @param descrizione Array List delle descrizioni
+     * @param dateDiScadenza Array List delle date di scadenza
+     * @param urls Array List degli URL
+     * @param images Array List delle immagini
+     * @param coloriToDo Array List dei colori
+     * @param stati Array List degli stati (completato)
+     * @param ordini Array List degli ordini
+     * @param nomeBacheca  Array List dei nomi della bacheca associata al ToDo
+     * @param utenteLoggato L'utente che possiede le bacheche
+     * @throws SQLException
+     */
     public void getToDo(ArrayList<String> titoli,
                         ArrayList<String> descrizione,
                         ArrayList<Date> dateDiScadenza,
@@ -98,7 +113,16 @@ public class implToDo implements toDoDao{
 
     }
 
-
+    /**
+     *
+     * Prende un singolo ToDo dal DB
+     *
+     * @param nomeToDo nome del ToDo da cercare
+     * @param nomeBacheca nome della bacheca nella quale cercare
+     * @param utenteLoggato nome dell'utente loggato
+     * @return Array List di stringhe con le caratteristiche
+     * @throws SQLException
+     */
     public ArrayList<String> getSingleToDoDB(String nomeToDo, String nomeBacheca, String utenteLoggato) throws SQLException {
 
         ArrayList<String> result = new ArrayList<>();
@@ -141,7 +165,14 @@ public class implToDo implements toDoDao{
         return result;
     }
 
-
+    /**
+     * Aggiunge un ToDo al DB seguendo i parametri
+     * @param nomeToDo
+     * @param nomeBacheca
+     * @param descrizione
+     * @param utenteLoggato
+     * @throws SQLException
+     */
     public void addToDoDB(String nomeToDo, String nomeBacheca, String descrizione, String utenteLoggato) throws SQLException {
 
         LocalDate tomorrow = LocalDate.now().plusDays(1);
@@ -157,6 +188,22 @@ public class implToDo implements toDoDao{
         ps.close();
 
     }
+
+    /**
+     *
+     * Aggiorna il ToDo
+     *
+     * @param newNome
+     * @param oldNome
+     * @param descrizione
+     * @param dataDiScadenza
+     * @param url
+     * @param coloreScelto
+     * @param completato
+     * @param nomeBacheca
+     * @param utenteLoggato
+     * @throws SQLException
+     */
     public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, String nomeBacheca, String utenteLoggato) throws SQLException {
         System.out.println(oldNome + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + nomeBacheca);
         System.out.println(newNome + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + nomeBacheca);
@@ -228,6 +275,15 @@ public class implToDo implements toDoDao{
 
 
     }
+
+    /**
+     * Sposta il ToDo da una bacheca ad un'altra
+     * @param nomeBacheca1
+     * @param nomeToDo
+     * @param nomeBacheca2
+     * @param utenteLoggato
+     * @throws SQLException
+     */
     public void spostaToDo(String nomeBacheca1, String nomeToDo, String nomeBacheca2, String utenteLoggato) throws SQLException {
 
         String query = "SELECT moveToDoToNewBacheca(?, ?, ?, ?)";
@@ -254,7 +310,14 @@ public class implToDo implements toDoDao{
 
     }
 
-
+    /**
+     * Cambia ordine nel ToDo nella bacheca
+     * @param nomeBacheca
+     * @param nomeToDo
+     * @param nuovoOrdine
+     * @param utenteLoggato
+     * @throws SQLException
+     */
     public void swapToDoOrder(String nomeBacheca, String nomeToDo, int nuovoOrdine, String utenteLoggato) throws SQLException {
 
         String query = "SELECT swapToDoOrder(?, ?, ?, ?);";
@@ -280,6 +343,14 @@ public class implToDo implements toDoDao{
 
     }
 
+    /**
+     * Controlla se l'utente possiede un determinato ToDo
+     * @param nomeBacheca
+     * @param nomeTodo
+     * @param utenteLoggato
+     * @return
+     * @throws SQLException
+     */
     public boolean autoreToDo(String nomeBacheca, String nomeTodo, String utenteLoggato) throws SQLException {
         String query = "SELECT 1 FROM TODO WHERE nomeBacheca = ? AND titolo = ? AND autore = ?";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -294,8 +365,14 @@ public class implToDo implements toDoDao{
         return esiste;
     }
 
-
-
+    /**
+     * Aggiunge una condivisione al ToDo
+     * @param nomeBacheca
+     * @param nomeToDo
+     * @param utenteLoggato
+     * @param destinatario
+     * @throws SQLException
+     */
     public void aggiungiCondivisione(String nomeBacheca, String nomeToDo, String utenteLoggato, String destinatario) throws SQLException{
         String query = "INSERT INTO CONDIVISIONE VALUES(?, ?, ?, ?)";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -308,6 +385,13 @@ public class implToDo implements toDoDao{
 
     }
 
+    /**
+     * Rimuove un ToDo dal DB
+     * @param nomeBacheca
+     * @param nomeToDo
+     * @param utenteLoggato
+     * @throws SQLException
+     */
     public void removeToDo(String nomeBacheca, String nomeToDo, String utenteLoggato) throws SQLException{
         String query = "DELETE FROM TODO where titolo = ? AND nomeBacheca = ? AND autore = ?";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -320,6 +404,14 @@ public class implToDo implements toDoDao{
 
     }
 
+    /**
+     * Rimuove la condivisione di un ToDo (4 parametri se si conosce il destinatario)
+     * @param nomeBacheca
+     * @param nomeToDo
+     * @param utenteLoggato
+     * @param destinatario
+     * @throws SQLException
+     */
     public void removeCondivisione(String nomeBacheca, String nomeToDo, String utenteLoggato, String destinatario) throws SQLException{
 
         String query2 = "DELETE FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND todoautorenome = ? AND destinatario = ?";
@@ -333,6 +425,14 @@ public class implToDo implements toDoDao{
         ps.close();
         ps.close();
     }
+
+    /**
+     * Rimuove la condivisione di un ToDo (3 parametri se non si conosce il destinatario)
+     * @param nomeBacheca
+     * @param nomeToDo
+     * @param utenteLoggato
+     * @throws SQLException
+     */
     public void removeCondivisione(String nomeBacheca, String nomeToDo, String utenteLoggato) throws SQLException{
         String query1 = "SELECT todoautorenome FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND destinatario = ?";
         PreparedStatement ps = connection.prepareStatement(query1);
@@ -360,6 +460,12 @@ public class implToDo implements toDoDao{
         ps.close();
     }
 
+    /**
+     * Prende tutte le condivisione che possiede un utente dal DB
+     * @param utenteLoggato
+     * @param dati
+     * @throws SQLException
+     */
     public void getCondivisioniFromDB(String utenteLoggato, ArrayList<ArrayList<String>> dati) throws SQLException {
         dati.clear();
         dati.add(new ArrayList<>()); // titoli
