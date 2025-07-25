@@ -1,4 +1,4 @@
-package DAO;
+package dao;
 
 
 
@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public interface toDoDao {
+public interface ToDoDao {
     void getToDo(ArrayList<String> titoli,
                  ArrayList<String> descrizione,
                  ArrayList<Date> dateDiScadenza,

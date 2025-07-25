@@ -1,62 +1,49 @@
-package Controller;
+package controller;
 
-import Database.DatabaseConnection;
-import ImplementazioneDao.implBacheca;
-import ImplementazioneDao.implToDo;
-import ImplementazioneDao.implUtente;
+import implementazionedao.ImplBacheca;
+import implementazionedao.ImplToDo;
+import implementazionedao.ImplUtente;
 import model.Bacheca;
 import model.ToDo;
 
-import DAO.bachecaDao;
-import DAO.toDoDao;
-import DAO.utenteDao;
-import model.Utente;
+import dao.BachecaDao;
+import dao.ToDoDao;
+import dao.UtenteDao;
 
 import java.awt.*;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Classe che si occupa gestire il funziomaneto programma collegando GUI a DB
  */
 public class Controller {
-    private final utenteDao uDAO;
-    private final bachecaDao bDAO;
-    private final toDoDao tDAO;
+    private final UtenteDao uDAO;
+    private final BachecaDao bDAO;
+    private final ToDoDao tDAO;
 
-    Date Filter = null;
+    Date filter = null;
 
-    private DatabaseConnection dbConnection = new DatabaseConnection();
-    private ArrayList<Bacheca> Bacheche = new ArrayList<Bacheca>();
-    private ArrayList<ToDo> ToDos = new ArrayList<ToDo>();
+    private ArrayList<Bacheca> bacheche = new ArrayList<>();
+    private ArrayList<ToDo> toDos = new ArrayList<>();
     private String utenteLoggato = null;
 
     public Controller() {
-        this.uDAO = new implUtente();
-        this.bDAO = new implBacheca();
-        this.tDAO = new implToDo();
+        this.uDAO = new ImplUtente();
+        this.bDAO = new ImplBacheca();
+        this.tDAO = new ImplToDo();
     }
 
-//    public ArrayList<Utente> getUtenti(){
-//        return utenti;
-//    }
-
-    public String getUtenteLoggato(){
-        return utenteLoggato;
-    }
 
     /**
      * Aggiunge un utente al DB
-     * @param NomeUtente nome dell'utente da aggiungere
-     * @param Password dell'utente da aggiungere, char[] per gestione della password
+     * @param nomeUtente nome dell'utente da aggiungere
+     * @param password dell'utente da aggiungere, char[] per gestione della password
      *
      */
-    public void addUtente(String NomeUtente, char[] Password) throws SQLException {
-    uDAO.addUtente(NomeUtente, Password);
+    public void addUtente(String nomeUtente, char[] password) throws SQLException {
+    uDAO.addUtente(nomeUtente, password);
     }
     /**
      * Verifica il login di un utente al DB
@@ -65,9 +52,8 @@ public class Controller {
      * @return un flag booleano che indica se l'azione ha avuto successo o meno
      *
      */
-    public boolean LoginUtente(String nomeUtente, char[] password) throws SQLException {
+    public boolean loginUtente(String nomeUtente, char[] password) throws SQLException {
         utenteLoggato = uDAO.loginUtente(nomeUtente, password);
-        System.out.println(utenteLoggato);
         if(utenteLoggato != null)
         {
             getBachecheFromDB();
@@ -83,7 +69,7 @@ public class Controller {
      * @return Arraylist di bacheche
      */
     public ArrayList<Bacheca> getBachecheFromDB() throws SQLException {
-        this.Bacheche = new ArrayList<>();
+        this.bacheche = new ArrayList<>();
         ArrayList<ArrayList<String>> bachecheInfo = new ArrayList<>();
 
         bachecheInfo.add(new ArrayList<>()); // lista per i titoli
@@ -92,13 +78,13 @@ public class Controller {
 
 
         if(bachecheInfo.getFirst().isEmpty())
-            return Bacheche;
+            return bacheche;
 
         for(int i = 0; i < bachecheInfo.getFirst().size(); i++){
-            Bacheche.add(new Bacheca(bachecheInfo.get(0).get(i), bachecheInfo.get(1).get(i)));
+            bacheche.add(new Bacheca(bachecheInfo.get(0).get(i), bachecheInfo.get(1).get(i)));
         }
         getToDoFromDB();
-        return Bacheche;
+        return bacheche;
     }
 
     /**
@@ -106,8 +92,7 @@ public class Controller {
      * @return Arraylist di ToDo
      */
     public ArrayList<ToDo> getToDoFromDB() throws SQLException {
-//        ToDos = tDAO.getToDo();
-        this.ToDos = new ArrayList<>();
+        this.toDos = new ArrayList<>();
         ArrayList<String> titoli = new ArrayList<>();
         ArrayList<String> descrizione = new ArrayList<>();
         ArrayList<Date> dateDiScadenza = new ArrayList<>();
@@ -143,9 +128,9 @@ public class Controller {
                     ordini.get(i),
                     nomeBacheca.get(i)
             );
-            ToDos.add(todo);
+            toDos.add(todo);
         }
-        return ToDos;
+        return toDos;
     }
 
     public ArrayList<String> getSingleToDoDB(String nomeToDo, String nomeBacheca) throws SQLException {
@@ -156,9 +141,9 @@ public class Controller {
      * @return Array list di String delle caratteristiche del ToDo
      */
 
-    public ArrayList<String> getSingleToDo(String nomeToDo, String nomeBacheca) throws SQLException {
+    public ArrayList<String> getSingleToDo(String nomeToDo, String nomeBacheca) {
         ArrayList<String> caratteristiche = new ArrayList<>();
-        for(ToDo t : ToDos)
+        for(ToDo t : toDos)
             if(t.nomeBacheca.equals(nomeBacheca) && t.titolo.equals(nomeToDo)){
                 caratteristiche.add(t.descrizione);
                 caratteristiche.add(String.valueOf(t.dataDiScadenza));
@@ -186,7 +171,7 @@ public class Controller {
     // Ritorna lista titoli delle bacheche
     public ArrayList<String> getTitoliBacheche() {
         ArrayList<String> titoli = new ArrayList<>();
-        for (Bacheca b : Bacheche) {
+        for (Bacheca b : bacheche) {
             titoli.add(b.getTitolo());
         }
         return titoli;
@@ -199,18 +184,15 @@ public class Controller {
 
         ArrayList<ArrayList<String>> result = new ArrayList<>();
 
-        for (int i = 0; i < Bacheche.size(); i++) {
+        for (int i = 0; i < bacheche.size(); i++) {
             ArrayList<String> titoli = new ArrayList<>();
-            for (ToDo t : ToDos) {
+            for (ToDo t : toDos) {
 
-                if(Filter == null){
-                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
+                if(filter == null && t.nomeBacheca.equals(bacheche.get(i).getTitolo())){
                         titoli.add(t.getTitolo());
-                }else
-                {
-                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter))))
+                }else if(t.nomeBacheca.equals(bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(filter))))
                         titoli.add(t.getTitolo());
-                }
+
 
 
             }
@@ -223,23 +205,15 @@ public class Controller {
      */
     public ArrayList<ArrayList<String>> getTuttiColoriToDo() {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
-        for (int i = 0; i < Bacheche.size(); i++) {
+        for (int i = 0; i < bacheche.size(); i++) {
             ArrayList<String> colori = new ArrayList<>();
-            for (ToDo t : ToDos) {
-                if(Filter == null){
-                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
-                        colori.add(t.Colore);
-                }else
-                {
-//                    System.out.println(t.dataDiScadenza + "   " + Filter);
+            for (ToDo t : toDos) {
+                if(filter == null && t.nomeBacheca.equals(bacheche.get(i).getTitolo())){
 
-//                    if((String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter)))){
-//                        System.out.println("UGUALI!!");
-//                    }
-
-                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter))))
                         colori.add(t.Colore);
-                }
+                }else if(t.nomeBacheca.equals(bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(filter))))
+                        colori.add(t.Colore);
+
             }
             result.add(colori);
         }
@@ -276,7 +250,7 @@ public class Controller {
      */
     public boolean cercaToDo(String nomeBacheca, String nomeToDo){
 
-        for(ToDo t : ToDos){
+        for(ToDo t : toDos){
             if(t.getTitolo().equals(nomeToDo) && t.nomeBacheca.equals(nomeBacheca)){
                 return true;
             }
@@ -352,13 +326,13 @@ public class Controller {
      * Imposta il filtro della data
      **/
     public void setFiltro(Date data) {
-        Filter = data;
+        filter = data;
     }
     /**
      * Imposta il filtro della data alla data odierna
      **/
     public void setFiltro() {
-        Filter = new Date(System.currentTimeMillis());
+        filter = new Date(System.currentTimeMillis());
 
     }
 

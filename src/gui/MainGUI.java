@@ -1,6 +1,6 @@
 package gui;
 
-import Controller.Controller;
+import controller.Controller;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,14 +10,13 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Locale;
+
 /**
  * Classe MainGUI che si occupa di creare l'interfaccia delle bacheche
  */
 public class MainGUI {
-
-
-    private JPanel MainGUIPanel;
+    private static final String TITOLO = "titolo";
+    public JPanel mainGUIPanel;
     public static JFrame frame;
     private static Controller controller;
     private static final ArrayList<JPanel> BachecheJPanel = new ArrayList<>();
@@ -27,14 +26,14 @@ public class MainGUI {
      *
      */
 
-    public MainGUI(JFrame frameChiamante, Controller controller) {
-        MainGUI.controller = controller;
+    public MainGUI(Controller controller) {
+        this.controller = controller;
 
         //Creazione finestra principale
         frame = new JFrame("Interfaccia principale");
         frame.setSize(800, 800);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         frame.setLayout(new BorderLayout());
 
         // Barra in alto con bottone menu
@@ -85,9 +84,9 @@ public class MainGUI {
                         buildPanels(centerPanelContainer);
                         coloraPanels();
 
-                    }catch (Exception ex)
+                    }catch (Exception _)
                     {
-                        System.out.println(ex.getMessage());
+                        //Catch block
                     }
                 });
         spostaToDoItem.addActionListener(e -> {
@@ -134,8 +133,8 @@ public class MainGUI {
                 controller.spostaToDo(nomeBacheca1, nomeToDo, nomeBacheca2);
                 buildPanels(centerPanelContainer);
                 coloraPanels();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+            } catch (SQLException _) {
+                //Catch block
             }
 
         });
@@ -165,16 +164,16 @@ public class MainGUI {
             String destinatario = JOptionPane.showInputDialog("Inserisci il nome dell'utente con cui condividere il ToDo");
             try {
                 controller.aggiungiCondivisione(nomeBacheca1, nomeToDo, destinatario);
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+            } catch (SQLException _) {
+                //Catch block
             }
 
         });
         visualizzaCondivisioneItem.addActionListener(e -> {
             try {
-                ToDoCondivisi toDoCondivisi = new ToDoCondivisi(controller);
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+                new ToDoCondivisi(controller);
+            } catch (SQLException _) {
+                //Catch block
             }
 
         });
@@ -202,7 +201,7 @@ public class MainGUI {
                 try {
                     LocalDate data = LocalDate.parse(dataStr); // converte da stringa a LocalDate
                     controller.setFiltro(Date.valueOf(data));
-                } catch (Exception ex) {
+                } catch (Exception _) {
                     JOptionPane.showMessageDialog(frame, "Formato data non valido", "Errore", JOptionPane.INFORMATION_MESSAGE);
                 }
 
@@ -229,21 +228,14 @@ public class MainGUI {
             );
 
             if(scelta == 0){
-                try {
-                    frame.dispose();
-                    Login.showLogin(); // Riapri Login
+                frame.dispose();
+                Login.showLogin(); // Riapri Login
 
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
             }
 
         });
 
-        menuButton.addActionListener(e -> {
-            popupMenu.show(menuButton, 0, menuButton.getHeight());
-
-        });
+        menuButton.addActionListener(_ -> popupMenu.show(menuButton, 0, menuButton.getHeight()));
 
         frame.addWindowStateListener(e -> {
             boolean isMaximized = (e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
@@ -269,8 +261,8 @@ public class MainGUI {
         topPanel.setOpaque(false);
 
         JLabel titolo = new JLabel(nomeBacheca);
-        titolo.setName("titolo");
-        titolo.putClientProperty("id", "titolo");
+        titolo.setName(TITOLO);
+        titolo.putClientProperty("id", TITOLO);
 
         titolo.setHorizontalAlignment(SwingConstants.CENTER);
         titolo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -293,14 +285,13 @@ public class MainGUI {
                 );
 
                 if(risposta == JOptionPane.OK_OPTION){
-                    //controller.getUtenteLoggato().bacheche.get(indexBacheca).toDoList.remove(indexToDo);
                     try {
                         controller.removeBacheca(titolo.getText());
 
                         parent.remove(bachecaJPanel);
 
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
+                    } catch (SQLException _) {
+                        //Catch block
                     }
 
                     parent.revalidate();
@@ -332,9 +323,7 @@ public class MainGUI {
         plusButton.setName("UI");
 
         plusButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        plusButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        plusButton.addActionListener(e -> {
                 String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nomeToDo", "Crea ToDo", JOptionPane.INFORMATION_MESSAGE);
 
                 //inserire check per unique al nome di bacheca
@@ -352,10 +341,9 @@ public class MainGUI {
                 try {
                     controller.addToDoDB(nomeTemp, titolo.getText(), descTemp);
                     addToDo(nomeTemp, null, titolo.getText());
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                } catch (SQLException _) {
+                    //Catch block
                 }
-            }
         });
 
         bachecaJPanel.add(topPanel, BorderLayout.NORTH);
@@ -379,9 +367,9 @@ public class MainGUI {
                     if(toDoButton == null)
                         return;
 
-                    ToDoGUI guiToDo = new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller, controller.autoreToDo(nomeBacheca, titolo.getText()));
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller, controller.autoreToDo(nomeBacheca, titolo.getText()));
+                } catch (SQLException _) {
+                    //Catch block
                 }
             }else {
                 JOptionPane.showMessageDialog(frame, "Nessun ToDo trovato con il nome " + search);
@@ -398,7 +386,7 @@ public class MainGUI {
      **/
     private static void coloraPanels() {
         for (JPanel panel : BachecheJPanel) {
-            JLabel lbl = (JLabel) findComponentByName(panel, "titolo");
+            JLabel lbl = (JLabel) findComponentByName(panel, TITOLO);
             if (lbl != null) {
                 switch (lbl.getText()) {
                     case "Università" -> {
@@ -412,6 +400,10 @@ public class MainGUI {
                     case "Tempo Libero" -> {
                         panel.setBackground(Color.decode("#63326e"));
                         lbl.setForeground(Color.decode("#9ccd91"));
+                    }
+                    default -> {
+                        panel.setBackground(Color.decode("#000000"));
+                        lbl.setForeground(Color.decode("#FFFFFF"));
                     }
                 }
             }
@@ -486,25 +478,25 @@ public class MainGUI {
         }
     }
     /**
-     * Aggiunge un ToDo alla bacheca e al Database con l'ultilizzo del controller
+     * Aggiunge un ToDo alla bacheca e al database con l'ultilizzo del controller
      * @param nomeTodo Il nome del ToDo da aggiungere
-     * @param Colore Il colore del ToDo
+     * @param colore Il colore del ToDo
      * @param nomeBacheca Il nome della bacheca associata al ToDo
      */
-    private void addToDo(String nomeTodo, String Colore, String nomeBacheca) {
+    private void addToDo(String nomeTodo, String colore, String nomeBacheca) {
 
         JButton newButton = new JButton(nomeTodo);
         newButton.setName(nomeTodo);
 
-        if(Colore == null)
+        if(colore == null)
             newButton.setBackground(Color.white);
         else{
-            newButton.setBackground(Color.decode(Colore));
-            newButton.setForeground(coloreComplementare(Color.decode(Colore)));
+            newButton.setBackground(Color.decode(colore));
+            newButton.setForeground(coloreComplementare(Color.decode(colore)));
         }
 
         for (JPanel panel : BachecheJPanel) {
-            JLabel lbl = (JLabel) findComponentByName(panel, "titolo");
+            JLabel lbl = (JLabel) findComponentByName(panel, TITOLO);
             if(lbl != null && lbl.getText().equals(nomeBacheca)){
 
                 JPanel toDoPanel = (JPanel) findComponentByName(panel, "toDoPanel");
@@ -519,25 +511,19 @@ public class MainGUI {
 
                     newButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                     toDoPanel.add(Box.createVerticalStrut(20)); // spazio verticale di 20px
-                    //System.out.println("bottone creato");
 
                     final boolean[] isDragging = {false};
                     final boolean[] isYours = {true};
-                    //apre l'interfaccia del todo quando clicchi
-                    newButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    newButton.addActionListener(e ->{
 
                             if(isDragging[0])
                                 return;
 
-                            try {
-                                ToDoGUI guiToDo = new ToDoGUI(toDoPanel, newButton, newButton.getText(), nomeBacheca, controller, isYours[0]);
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
-                            }
+
+                            new ToDoGUI(toDoPanel, newButton, newButton.getText(), nomeBacheca, controller, isYours[0]);
+
                             ToDoGUI.frameTodo.setVisible(true);
-                        }
+
                     });
 
                     // Coordinate relative per il drag
@@ -571,7 +557,6 @@ public class MainGUI {
                             todoButtonsArr.remove(newButton); // rimuove se stesso
 
                             // Applichiamo solo ai bottoni trascinabili
-//                            todoButtonsArr.removeIf(b -> !isDraggable(b));
 
                             // Trova la nuova posizione
                             int insertIndex = 0;
@@ -591,11 +576,10 @@ public class MainGUI {
                                 controller.swapToDoOrder(nomeBacheca, newButton.getText(), insertIndex);
                                 buildPanels(centerPanelContainer);
                                 coloraPanels();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException _) {
+                                //Catch block
                             }
 
-                            System.out.println("Nuova posizione logica: " + insertIndex);
                         }
 
 
@@ -617,7 +601,6 @@ public class MainGUI {
                     try{
                         if(!controller.autoreToDo(nomeBacheca, newButton.getText())){
                             isYours[0] = false;
-                            System.out.println("Trovato todo non tuo " + newButton.getText());
                             // Separatore
                             JSeparator separator = new JSeparator();
                             separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10)); // lo estende orizzontalmente
@@ -625,8 +608,8 @@ public class MainGUI {
                             toDoPanel.add(Box.createVerticalStrut(20)); // spazio verticale di 20px
 
                         }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    } catch (Exception _) {
+                        //Catch block
                     }
 
                     toDoPanel.add(newButton);

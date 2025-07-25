@@ -1,7 +1,5 @@
-package ImplementazioneDao;
-import DAO.toDoDao;
-import Database.DatabaseConnection;
-import model.ToDo;
+package implementazionedao;
+import dao.ToDoDao;
 
 import java.awt.*;
 import java.sql.Date;
@@ -10,11 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import static database.DatabaseConnection.getInstance;
 
-import static Database.DatabaseConnection.connection;
 
-public class implToDo implements toDoDao{
-
+public class ImplToDo implements ToDoDao {
+    static final String DESCRIZIONE = "Descrizione";
+    static final String DELETE_CONDIVISIONE = "DELETE FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND todoautorenome = ? AND destinatario = ?";
     /**
      * Prende i ToDo dal DB
      *
@@ -41,8 +40,8 @@ public class implToDo implements toDoDao{
                         ArrayList<String> nomeBacheca,
                         String utenteLoggato
     ) throws SQLException {
-        String query = "SELECT * FROM ToDo WHERE Autore = ? ORDER BY ordine";
-        PreparedStatement ps = connection.prepareStatement(query);
+        String query = "SELECT titolo, descrizione, datadiscadenza, url, image, autore, coloresfondo, completato, ordine, nomebacheca FROM ToDo WHERE Autore = ? ORDER BY ordine";
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, utenteLoggato);
 
         ResultSet rs = ps.executeQuery();
@@ -52,7 +51,7 @@ public class implToDo implements toDoDao{
             String colore = "";
 
             titoli.add(rs.getString("Titolo"));
-            descrizione.add(rs.getString("Descrizione"));
+            descrizione.add(rs.getString(DESCRIZIONE));
 
             //Data di scadenza per il colore del ToDo
             Date dataDiScadenza = rs.getDate("dataDiScadenza");
@@ -76,8 +75,8 @@ public class implToDo implements toDoDao{
         rs.close();
         ps.close();
 
-        String queryCond = "SELECT * FROM TODO WHERE titolo IN (SELECT todotitolo FROM CONDIVISIONE WHERE destinatario = ?)";
-        PreparedStatement psCond = connection.prepareStatement(queryCond);
+        String queryCond = "SELECT titolo, descrizione, datadiscadenza, url, image, autore, coloresfondo, completato, ordine, nomebacheca FROM TODO WHERE titolo IN (SELECT todotitolo FROM CONDIVISIONE WHERE destinatario = ?)";
+        PreparedStatement psCond = getInstance().prepareStatement(queryCond);
         psCond.setString(1, utenteLoggato);
 
         ResultSet rsCond = psCond.executeQuery();
@@ -87,7 +86,7 @@ public class implToDo implements toDoDao{
             String colore = "";
 
             titoli.add(rsCond.getString("Titolo"));
-            descrizione.add(rsCond.getString("Descrizione"));
+            descrizione.add(rsCond.getString(DESCRIZIONE));
 
             //Data di scadenza per il colore del ToDo
             Date dataDiScadenza = rsCond.getDate("dataDiScadenza");
@@ -132,9 +131,9 @@ public class implToDo implements toDoDao{
         String url;
         boolean completato;
 
-        String query = "SELECT * FROM ToDo WHERE Autore = ? AND Titolo = ? AND nomeBacheca = ?";
+        String query = "SELECT titolo, descrizione, datadiscadenza, url, image, autore, coloresfondo, completato, ordine, nomebacheca url FROM ToDo WHERE Autore = ? AND Titolo = ? AND nomeBacheca = ?";
 
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, utenteLoggato);
         ps.setString(2, nomeToDo);
         ps.setString(3, nomeBacheca);
@@ -142,10 +141,9 @@ public class implToDo implements toDoDao{
         ResultSet rs = ps.executeQuery();
 
         if (rs.next()) {
-            descrizione = rs.getString("Descrizione");
+            descrizione = rs.getString(DESCRIZIONE);
             dataDiScadenza = String.valueOf(rs.getDate("DataDiScadenza"));
             url = rs.getString("Url");
-            //image = rs.getString("Image");
             String color = rs.getString("ColoreSfondo");
             completato = rs.getBoolean("Completato");
 
@@ -178,7 +176,7 @@ public class implToDo implements toDoDao{
         LocalDate tomorrow = LocalDate.now().plusDays(1);
 
         String query = "INSERT INTO TODO(titolo, descrizione, datadiscadenza, autore, nomeBacheca) VALUES (?, ?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, nomeToDo);
         ps.setString(2, descrizione);
         ps.setDate(3, java.sql.Date.valueOf(tomorrow));
@@ -205,8 +203,6 @@ public class implToDo implements toDoDao{
      * @throws SQLException
      */
     public void updateToDo(String newNome, String oldNome, String descrizione, String dataDiScadenza, String url, Color coloreScelto, boolean completato, String nomeBacheca, String utenteLoggato) throws SQLException {
-        System.out.println(oldNome + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + nomeBacheca);
-        System.out.println(newNome + " " + descrizione + " " + dataDiScadenza + " " + url + " " + coloreScelto + " " + completato + " " + nomeBacheca);
 
         String hex = String.format("#%02x%02x%02x",
                 coloreScelto.getRed(),
@@ -214,7 +210,7 @@ public class implToDo implements toDoDao{
                 coloreScelto.getBlue());
 
         String query = "UPDATE TODO SET titolo = ?, descrizione = ?, datadiscadenza = ?, URL = ?, coloreSfondo = ?, completato = ? WHERE autore = ? AND nomeBacheca = ? AND titolo = ?;";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, newNome);
         ps.setString(2, descrizione);
         ps.setDate(3, Date.valueOf(dataDiScadenza));
@@ -230,7 +226,7 @@ public class implToDo implements toDoDao{
         if(righeModificate <= 0){
 
             String query1 = "SELECT todoautorenome FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND destinatario = ?";
-            ps = connection.prepareStatement(query1);
+            ps = getInstance().prepareStatement(query1);
             ps.setString(1, oldNome);
             ps.setString(2, nomeBacheca);
             ps.setString(3, utenteLoggato);
@@ -243,8 +239,8 @@ public class implToDo implements toDoDao{
             rs.close();
             ps.close();
 
-            String query2 = "DELETE FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND todoautorenome = ? AND destinatario = ?";
-            ps = connection.prepareStatement(query2);
+            String query2 = DELETE_CONDIVISIONE;
+            ps = getInstance().prepareStatement(query2);
             ps.setString(1, oldNome);
             ps.setString(2, nomeBacheca);
             ps.setString(3, autore);
@@ -254,7 +250,7 @@ public class implToDo implements toDoDao{
 
 
             String query3 = "UPDATE TODO SET titolo = ?, descrizione = ?, datadiscadenza = ?, URL = ?, coloreSfondo = ?, completato = ? WHERE autore = ? AND nomeBacheca = ? AND titolo = ?;";
-            ps = connection.prepareStatement(query3);
+            ps = getInstance().prepareStatement(query3);
             ps.setString(1, newNome);
             ps.setString(2, descrizione);
             ps.setDate(3, Date.valueOf(dataDiScadenza));
@@ -287,22 +283,13 @@ public class implToDo implements toDoDao{
     public void spostaToDo(String nomeBacheca1, String nomeToDo, String nomeBacheca2, String utenteLoggato) throws SQLException {
 
         String query = "SELECT moveToDoToNewBacheca(?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, nomeToDo);
         ps.setString(2, utenteLoggato);
         ps.setString(3, nomeBacheca1);
         ps.setString(4, nomeBacheca2);
 
         ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            boolean risultato = rs.getBoolean(1);
-            if (risultato) {
-                System.out.println("ToDo spostato con successo!");
-            } else {
-                System.out.println("ToDo non trovato o errore nello spostamento.");
-            }
-        }
 
         rs.close();
         ps.close();
@@ -321,22 +308,13 @@ public class implToDo implements toDoDao{
     public void swapToDoOrder(String nomeBacheca, String nomeToDo, int nuovoOrdine, String utenteLoggato) throws SQLException {
 
         String query = "SELECT swapToDoOrder(?, ?, ?, ?);";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, nomeBacheca);
         ps.setString(2, utenteLoggato);
         ps.setString(3, nomeToDo);
         ps.setInt(4, nuovoOrdine);
 
         ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            boolean risultato = rs.getBoolean(1);
-            if (risultato) {
-                System.out.println("ToDo spostato con successo!");
-            } else {
-                System.out.println("ToDo non trovato o errore nello spostamento.");
-            }
-        }
 
         rs.close();
         ps.close();
@@ -353,7 +331,7 @@ public class implToDo implements toDoDao{
      */
     public boolean autoreToDo(String nomeBacheca, String nomeTodo, String utenteLoggato) throws SQLException {
         String query = "SELECT 1 FROM TODO WHERE nomeBacheca = ? AND titolo = ? AND autore = ?";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, nomeBacheca);
         ps.setString(2, nomeTodo);
         ps.setString(3, utenteLoggato);
@@ -375,7 +353,7 @@ public class implToDo implements toDoDao{
      */
     public void aggiungiCondivisione(String nomeBacheca, String nomeToDo, String utenteLoggato, String destinatario) throws SQLException{
         String query = "INSERT INTO CONDIVISIONE VALUES(?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, destinatario);
         ps.setString(2, nomeToDo);
         ps.setString(3, nomeBacheca);
@@ -394,7 +372,7 @@ public class implToDo implements toDoDao{
      */
     public void removeToDo(String nomeBacheca, String nomeToDo, String utenteLoggato) throws SQLException{
         String query = "DELETE FROM TODO where titolo = ? AND nomeBacheca = ? AND autore = ?";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, nomeToDo);
         ps.setString(2, nomeBacheca);
         ps.setString(3, utenteLoggato);
@@ -414,9 +392,9 @@ public class implToDo implements toDoDao{
      */
     public void removeCondivisione(String nomeBacheca, String nomeToDo, String utenteLoggato, String destinatario) throws SQLException{
 
-        String query2 = "DELETE FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND todoautorenome = ? AND destinatario = ?";
+        String query2 = DELETE_CONDIVISIONE;
 
-        PreparedStatement ps = connection.prepareStatement(query2);
+        PreparedStatement ps = getInstance().prepareStatement(query2);
         ps.setString(1, nomeToDo);
         ps.setString(2, nomeBacheca);
         ps.setString(3, utenteLoggato);
@@ -435,7 +413,7 @@ public class implToDo implements toDoDao{
      */
     public void removeCondivisione(String nomeBacheca, String nomeToDo, String utenteLoggato) throws SQLException{
         String query1 = "SELECT todoautorenome FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND destinatario = ?";
-        PreparedStatement ps = connection.prepareStatement(query1);
+        PreparedStatement ps = getInstance().prepareStatement(query1);
         ps.setString(1, nomeToDo);
         ps.setString(2, nomeBacheca);
         ps.setString(3, utenteLoggato);
@@ -444,9 +422,9 @@ public class implToDo implements toDoDao{
         if (rs.next()) {
             autore = rs.getString("todoautorenome");
 
-            String query2 = "DELETE FROM CONDIVISIONE WHERE todotitolo = ? AND todoBachecaNome = ? AND todoautorenome = ? AND destinatario = ?";
+            String query2 = DELETE_CONDIVISIONE;
 
-            ps = connection.prepareStatement(query2);
+            ps = getInstance().prepareStatement(query2);
             ps.setString(1, nomeToDo);
             ps.setString(2, nomeBacheca);
             ps.setString(3, autore);
@@ -473,7 +451,7 @@ public class implToDo implements toDoDao{
         dati.add(new ArrayList<>()); // destinatari
 
         String query = "SELECT destinatario, todotitolo, todobachecanome FROM CONDIVISIONE WHERE todoautorenome = ? ORDER BY todotitolo";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, utenteLoggato);
         ResultSet rs = ps.executeQuery();
 

@@ -1,13 +1,12 @@
-package ImplementazioneDao;
-import DAO.utenteDao;
-import Database.DatabaseConnection;
+package implementazionedao;
+import dao.UtenteDao;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import static database.DatabaseConnection.getInstance;
 
-import static Database.DatabaseConnection.connection;
-
-public class implUtente implements utenteDao{
+public class ImplUtente implements UtenteDao {
     /**
      * Registra un utente al DB
      * @param nomeUtente nome dell'utente da registrare
@@ -18,7 +17,7 @@ public class implUtente implements utenteDao{
 
         String passwordString = new String(password);
 
-        PreparedStatement addBookPS = connection.prepareStatement(
+        PreparedStatement addBookPS = getInstance().prepareStatement(
                 "INSERT INTO UTENTE (NOME, PASSWORD) VALUES ('" + nomeUtente +"','" + passwordString +"');"
         );
         addBookPS.executeUpdate();
@@ -34,7 +33,7 @@ public class implUtente implements utenteDao{
         String passwordString = new String(password);
 
         String query = "SELECT * FROM UTENTE WHERE NOME = ? AND PASSWORD = ?";
-        PreparedStatement ps = connection.prepareStatement(query);
+        PreparedStatement ps = getInstance().prepareStatement(query);
         ps.setString(1, nomeUtente);
         ps.setString(2, passwordString);
 

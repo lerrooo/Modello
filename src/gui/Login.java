@@ -1,33 +1,33 @@
 package gui;
 
-import Controller.Controller;
+import controller.Controller;
 
 import javax.swing.*;
 import java.sql.SQLException;
 /**
  * Si occupa della gestione della GUI del Login
- * Utilizza i componenti del form per comunicare con il Controller
+ * Utilizza i componenti del form per comunicare con il controller
  *
  */
 public class Login {
     private final Controller controller;
     private static JFrame mainFrame;
-    private JPanel LoginPanel;
+    private JPanel loginPanel;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton accediButton;
     private JButton registratiButton;
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         showLogin();
     }
     /**
      * Un metodo statico per riaprire il Login in seguito
      */
-    public static void showLogin() throws SQLException {
+    public static void showLogin() {
         JFrame frame = new JFrame("Login");
-        frame.setContentPane(new Login().LoginPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(new Login().loginPanel);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
         frame.setSize(500, 300);
@@ -45,15 +45,15 @@ public class Login {
                 return;
             }
             try {
-                boolean loginEffettuato = controller.LoginUtente(textField1.getText(), passwordField1.getPassword());
+                boolean loginEffettuato = controller.loginUtente(textField1.getText(), passwordField1.getPassword());
                 if (loginEffettuato){
-                    new MainGUI(mainFrame, controller);
+                    new MainGUI(controller);
                     mainFrame.dispose(); // Chiude login
                 } else {
                     JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+            } catch (SQLException _) {
+                //Catch block
             }
         });
 

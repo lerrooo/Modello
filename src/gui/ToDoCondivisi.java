@@ -1,6 +1,6 @@
 package gui;
 
-import Controller.Controller;
+import controller.Controller;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class ToDoCondivisi {
 
     static JFrame frameTodo;
-    private JPanel MainJPanel;
+    private JPanel mainJPanel;
     private JTable table;
-    private JScrollPane ScrollPane;
+    private JScrollPane scrollPane;
 
     /**
      * @param controller permette di prendere tutti i ToDo dal DB ed elencarli
@@ -26,11 +26,11 @@ public class ToDoCondivisi {
 
         ArrayList<ArrayList<String>> dati = controller.getCondivisioni();
         frameTodo = new JFrame("ToDo condivisi");
-        frameTodo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frameTodo.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frameTodo.setSize(400, 400);
         frameTodo.setResizable(false);
 
-        MainJPanel = new JPanel(new BorderLayout());
+        mainJPanel = new JPanel(new BorderLayout());
 
         // Crea il modello della tabella
         DefaultTableModel model = new DefaultTableModel();
@@ -51,6 +51,7 @@ public class ToDoCondivisi {
 
         // Listener per click sulla tabella
         table.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 int riga = table.getSelectedRow();
                 if (riga != -1) {
@@ -86,24 +87,11 @@ public class ToDoCondivisi {
             }
         });
 
+        scrollPane = new JScrollPane(table);
+        mainJPanel.add(scrollPane, BorderLayout.CENTER);
 
-
-
-        ScrollPane = new JScrollPane(table);
-        MainJPanel.add(ScrollPane, BorderLayout.CENTER);
-
-        frameTodo.setContentPane(MainJPanel);
+        frameTodo.setContentPane(mainJPanel);
         frameTodo.setVisible(true);
     }
 
-//     //Main per testare
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            ArrayList<String> lista = new ArrayList<>();
-//            lista.add("Comprare il latte");
-//            lista.add("Studiare Java");
-//            lista.add("Fare la spesa");
-//            new ToDoCondivisi(lista);
-//        });
-//    }
 }

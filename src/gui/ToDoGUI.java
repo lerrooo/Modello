@@ -1,16 +1,15 @@
 package gui;
 
-import Controller.Controller;
+import controller.Controller;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ToDoGUI {
-    private JPanel ToDoPanel;
+    private JPanel toDoPanel;
     private JButton modificaButton;
     private JTextArea descrizioneArea;
     private JTextField urlField;
@@ -23,10 +22,10 @@ public class ToDoGUI {
     private JButton confermaButton;
     static JFrame frameTodo;
     Color coloreScelto;
+    private static final String TITOLO = "Modifica ToDo";
 
-
-    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, String nomeBacheca, Controller controller, boolean isYours) throws SQLException {
-
+    public ToDoGUI(JPanel currentPanel, JButton todoBottone, String nomeToDo, String nomeBacheca, Controller controller, boolean isYours) {
+        
         ArrayList<String> caratteristiche = controller.getSingleToDo(nomeToDo, nomeBacheca);
 
         todoLabel.setText(nomeToDo);
@@ -39,26 +38,19 @@ public class ToDoGUI {
 
         coloreScelto = todoBottone.getBackground();
 
-        JFrame frame = new JFrame("Modifica ToDo");
+        JFrame frame = new JFrame(TITOLO);
         frameTodo = frame;
 
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setSize(400, 400);
-        frame.setContentPane(ToDoPanel);
+        frame.setContentPane(toDoPanel);
         frame.setVisible(true);
         frame.setResizable(false);
 
-        coloreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                coloreScelto = JColorChooser.showDialog(null, "Scegli un colore", Color.WHITE);
-            }
-        });
+        coloreButton.addActionListener(e -> coloreScelto = JColorChooser.showDialog(null, "Scegli un colore", Color.WHITE));
 
-        modificaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nuovo nome ToDo", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
+        modificaButton.addActionListener(e -> {
+                String nomeTemp = JOptionPane.showInputDialog(null, "Inserire nuovo nome ToDo", TITOLO, JOptionPane.INFORMATION_MESSAGE);
                 if(nomeTemp == null) return;
                 if(nomeTemp.length() > 20){
                     JOptionPane.showMessageDialog(frameTodo, "Inserisci meno di 20 caratteri", "Errore", JOptionPane.INFORMATION_MESSAGE);
@@ -67,29 +59,21 @@ public class ToDoGUI {
                 else
                 {
                     todoLabel.setText(nomeTemp);
-                    todoLabel.setFont(new Font(null, Font.PLAIN, (int) (36 - (nomeTemp.length()))));
+                    todoLabel.setFont(new Font(null, Font.PLAIN, (36 - (nomeTemp.length()))));
                 }
-
-            }
         });
-        modificaData.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
+        modificaData.addActionListener(e -> {
+                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", TITOLO, JOptionPane.INFORMATION_MESSAGE);
 
                 try{
-                    LocalDate data = LocalDate.parse(dataStr);
                     dataLabel.setText(dataStr);
-                }catch (Exception ex){
+                }catch (Exception _){
                     JOptionPane.showMessageDialog(frameTodo, "Formato data non valido", "Errore", JOptionPane.INFORMATION_MESSAGE);
 
                 }
 
-            }
         });
-        eliminaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        eliminaButton.addActionListener(e -> {
 
                 if(isYours){
                     int risposta = JOptionPane.showConfirmDialog(
@@ -104,8 +88,8 @@ public class ToDoGUI {
                     if(risposta == JOptionPane.OK_OPTION){
                         try {
                             controller.removeToDo(nomeBacheca, nomeToDo);
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
+                        } catch (SQLException _) {
+                            //Catch block
                         }
                         currentPanel.remove(todoBottone);
                         currentPanel.revalidate();
@@ -126,8 +110,8 @@ public class ToDoGUI {
                     if(risposta == JOptionPane.OK_OPTION){
                         try {
                             controller.removeCondivisione(nomeBacheca, nomeToDo);
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
+                        } catch (SQLException _) {
+                            //Catch block
                         }
                         currentPanel.remove(todoBottone);
                         currentPanel.revalidate();
@@ -138,12 +122,10 @@ public class ToDoGUI {
                 }
 
 
-            }
+
         });
 
-        confermaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        confermaButton.addActionListener(e -> {
                 try {
 
                     LocalDate today = LocalDate.now();
@@ -165,10 +147,9 @@ public class ToDoGUI {
                     JOptionPane.showMessageDialog(frame,"Modifiche effettuate con successo");
                     frameTodo.setVisible(false);
                     frameTodo.dispose();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                } catch (SQLException _) {
+                    //Catch block
                 }
-            }
         });
     }
 

@@ -1,21 +1,19 @@
 package gui;
 
-import Controller.Controller;
+import controller.Controller;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.Arrays;
 
 public class Registrazione {
-;
+
     private JFrame frameLogin;
-    private JPanel RegistrazionePanel;
+    private JPanel registrazionePanel;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JPasswordField passwordField2;
-    private JButton OK;
+    private JButton okButton;
 
     JFrame regFrame;
     /**
@@ -26,15 +24,13 @@ public class Registrazione {
 
             frameLogin = frameChiamante;
             regFrame = new JFrame("Registrazione");
-            regFrame.setContentPane(RegistrazionePanel);
-            regFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            regFrame.setContentPane(registrazionePanel);
+            regFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
             regFrame.pack();
             regFrame.setVisible(true);
 
 
-            OK.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+            okButton.addActionListener(e -> {
                     String nome = textField1.getText();
                     char[] password = passwordField1.getPassword();
                     char[] confermaPassword = passwordField2.getPassword();
@@ -44,8 +40,8 @@ public class Registrazione {
                         if (Arrays.equals(password, confermaPassword)) {
                                 try {
                                     controller.addUtente(nome, password);
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException _) {
+                                    //Catch block
                                 }
 
                                 JOptionPane.showMessageDialog(regFrame, "Registrazione completata con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
@@ -58,9 +54,9 @@ public class Registrazione {
                             }
                         } else {
                             JOptionPane.showMessageDialog(regFrame, "Password non corrispondenti", "Registrazione non effettuata", JOptionPane.INFORMATION_MESSAGE);                        }
-                    }
 
-            }
+
+                    }
             );
     }
 
