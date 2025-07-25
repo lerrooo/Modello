@@ -40,7 +40,7 @@ public class Login {
                     return;
                 }
                 try {
-                    boolean loginEffettuato = controller.loginUtente(textField1.getText(), passwordField1.getPassword());
+                    boolean loginEffettuato = controller.LoginUtente(textField1.getText(), passwordField1.getPassword());
                     System.out.println(loginEffettuato);
                     if (loginEffettuato){
                         System.out.println("utente trovato");

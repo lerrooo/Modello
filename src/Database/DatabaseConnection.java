@@ -1,8 +1,7 @@
-package DAO;
+package Database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabaseConnection{
@@ -10,7 +9,7 @@ public class DatabaseConnection{
     public static Connection connection = null;
     private String nome = "postgres";
     private String password = "admin";
-    private String url = "jdbc:postgresql://localhost:5432/progetto";
+    private String url = "jdbc:postgresql://localhost:5432/ProgettoPOO";
     private String driver = "org.postgresql.Driver";
 
     public DatabaseConnection() {

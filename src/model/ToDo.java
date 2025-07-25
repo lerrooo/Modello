@@ -13,6 +13,7 @@ public class ToDo {
     public String Colore;
     String Immagine;
     public boolean completato = false;
+    public int ordine;
     public String nomeBacheca;
 
 
@@ -21,7 +22,7 @@ public class ToDo {
     //String piuttosto che Utenti altrimenti un utente potrebbe accedere alle informazioni di un altro
     ArrayList<String> utentiAssociati = new ArrayList<String>();
 
-    public ToDo(String titoloIniziale, String descrizioneIniziale, Date data, String url, String image,String Color, boolean completato, String nomeBacheca){
+    public ToDo(String titoloIniziale, String descrizioneIniziale, Date data, String url, String image,String Color, boolean completato, int ordine, String nomeBacheca){
         titolo = titoloIniziale;
         descrizione = descrizioneIniziale;
         dataDiScadenza = data;
@@ -30,6 +31,7 @@ public class ToDo {
         Colore = Color;
         this.completato = completato;
         this.nomeBacheca = nomeBacheca;
+        this.ordine = ordine;
     }
 
     public ArrayList<String> getUtenti(){
