@@ -30,6 +30,8 @@ public class ToDoGUI {
         ArrayList<String> caratteristiche = controller.getSingleToDo(nomeToDo, nomeBacheca);
 
         todoLabel.setText(nomeToDo);
+        todoLabel.setFont(new Font(null, Font.PLAIN, (int) (36 - (nomeToDo.length() * 0.8))));
+
         descrizioneArea.setText(caratteristiche.getFirst());
         dataLabel.setText(String.valueOf(caratteristiche.get(1)));
         urlField.setText(caratteristiche.get(2));

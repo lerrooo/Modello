@@ -15,6 +15,8 @@ import model.Utente;
 import java.awt.*;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -23,10 +25,12 @@ public class Controller {
     private final bachecaDao bDAO;
     private final toDoDao tDAO;
 
+    Date Filter = null;
+
     private DatabaseConnection dbConnection = new DatabaseConnection();
     private ArrayList<Bacheca> Bacheche = new ArrayList<Bacheca>();
     private ArrayList<ToDo> ToDos = new ArrayList<ToDo>();
-    private String utenteLoggato = "";
+    private String utenteLoggato = null;
 
     public Controller() {
         this.uDAO = new implUtente();
@@ -50,7 +54,7 @@ public class Controller {
     public boolean LoginUtente(String nomeUtente, char[] password) throws SQLException {
         utenteLoggato = uDAO.loginUtente(nomeUtente, password);
         System.out.println(utenteLoggato);
-        if(!Objects.equals(utenteLoggato, ""))
+        if(utenteLoggato != null)
         {
             getBachecheFromDB();
             return true;
@@ -183,8 +187,23 @@ public class Controller {
         for (int i = 0; i < Bacheche.size(); i++) {
             ArrayList<String> titoli = new ArrayList<>();
             for (ToDo t : ToDos) {
-                if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
-                    titoli.add(t.getTitolo());
+
+                if(Filter == null){
+                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
+                        titoli.add(t.getTitolo());
+                }else
+                {
+//                    System.out.println(t.dataDiScadenza + "   " + Filter);
+
+//                    if((String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter)))){
+//                        System.out.println("UGUALI!!");
+//                    }
+
+                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter))))
+                        titoli.add(t.getTitolo());
+                }
+
+
             }
             result.add(titoli);
         }
@@ -196,8 +215,20 @@ public class Controller {
         for (int i = 0; i < Bacheche.size(); i++) {
             ArrayList<String> colori = new ArrayList<>();
             for (ToDo t : ToDos) {
-                if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
-                    colori.add(t.Colore);
+                if(Filter == null){
+                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()))
+                        colori.add(t.Colore);
+                }else
+                {
+//                    System.out.println(t.dataDiScadenza + "   " + Filter);
+
+//                    if((String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter)))){
+//                        System.out.println("UGUALI!!");
+//                    }
+
+                    if(t.nomeBacheca.equals(Bacheche.get(i).getTitolo()) && (String.valueOf(t.dataDiScadenza).equals(String.valueOf(Filter))))
+                        colori.add(t.Colore);
+                }
             }
             result.add(colori);
         }
@@ -273,6 +304,16 @@ public class Controller {
 
         return dati;
     }
+
+    public void setFiltro(Date data) {
+        Filter = data;
+    }
+
+    public void setFiltro() {
+        Filter = new Date(System.currentTimeMillis());
+
+    }
+
 
 //        public Controller() throws SQLException {
 //        Bacheche = getBacheche();

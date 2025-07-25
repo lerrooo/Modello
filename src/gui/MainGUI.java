@@ -6,11 +6,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Array;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainGUI {
+
 
     private JPanel MainGUIPanel;
     public static JFrame frame;
@@ -39,12 +42,7 @@ public class MainGUI {
 
         topBar.add(menuButton);
         frame.add(topBar, BorderLayout.NORTH);
-
-
         frame.add(centerPanelContainer, BorderLayout.CENTER);
-
-        buildPanels(centerPanelContainer);
-        coloraPanels();
 
         // Crea il popup menu
         JPopupMenu popupMenu = new JPopupMenu();
@@ -52,10 +50,15 @@ public class MainGUI {
         JMenuItem spostaToDoItem = new JMenuItem("Sposta ToDo in una nuova bacheca");
         JMenuItem aggiungiCondivisioneItem = new JMenuItem("Aggiungi condivisione");
         JMenuItem visualizzaCondivisioneItem = new JMenuItem("Visualizza condivisioni");
+        JMenuItem aggiungiFiltroDataItem = new JMenuItem("Filtra ToDo per data");
+        JMenuItem logOutItem = new JMenuItem("Logout");
+
         popupMenu.add(aggiungiBachecaItem);
         popupMenu.add(spostaToDoItem);
         popupMenu.add(aggiungiCondivisioneItem);
         popupMenu.add(visualizzaCondivisioneItem);
+        popupMenu.add(aggiungiFiltroDataItem);
+        popupMenu.add(logOutItem);
 
         //Action listeners del menù
         aggiungiBachecaItem.addActionListener(e -> {
@@ -169,13 +172,83 @@ public class MainGUI {
             }
 
         });
+        aggiungiFiltroDataItem.addActionListener(e -> {
+            int scelta = JOptionPane.showOptionDialog(
+                    null,
+                    "Scegli la data per cui filtrare",
+                    "Filtra per data",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Data odierna", "Data personalizzata", "Rimuovi filtro"},
+                    "Data odierna"
+            );
+
+            if(scelta == -1)
+                return;
+
+            if(scelta == 0){
+                controller.setFiltro();
+            } else if (scelta == 1) {
+
+                String dataStr = JOptionPane.showInputDialog(null, "Inserisci una nuova data di scadenza (YYYY-MM-DD)", "Modifica ToDo", JOptionPane.INFORMATION_MESSAGE);
+
+                try {
+                    LocalDate data = LocalDate.parse(dataStr); // converte da stringa a LocalDate
+                    controller.setFiltro(Date.valueOf(data));
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Formato data non valido", "Errore", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+
+            }else if (scelta == 2){
+                controller.setFiltro(null);
+
+            }
+
+            buildPanels(centerPanelContainer);
+            coloraPanels();
+
+        });
+        logOutItem.addActionListener(e -> {
+            int scelta = JOptionPane.showOptionDialog(
+                    null,
+                    "Disconnettersi?",
+                    "Logout",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Sì", "No"},
+                    "No"
+            );
+
+            if(scelta == 0){
+                try {
+                    frame.dispose();
+                    Login.showLogin(); // Riapri Login
+
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+        });
 
         menuButton.addActionListener(e -> {
             popupMenu.show(menuButton, 0, menuButton.getHeight());
 
         });
 
+        frame.addWindowStateListener(e -> {
+            boolean isMaximized = (e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
+            if (isMaximized) {
+                buildPanels(centerPanelContainer);
+                coloraPanels();
+            }
+        });
 
+        buildPanels(centerPanelContainer);
+        coloraPanels();
     }
     private JPanel createBachecaPanel(String nomeBacheca){
         JPanel bachecaJPanel = new JPanel(new BorderLayout());
@@ -195,7 +268,7 @@ public class MainGUI {
 
         JPanel buttonsRow = new JPanel(new BorderLayout());
         JButton removeButton = new JButton("x");
-        removeButton.setName("removeButton");
+        removeButton.setName("UI");
 
         removeButton.addActionListener(e -> {
             Container parent = bachecaJPanel.getParent();
@@ -231,6 +304,7 @@ public class MainGUI {
         });
 
         JButton searchButton = new JButton("+ Cerca");
+        searchButton.setName("UI");
 
         buttonsRow.add(searchButton, BorderLayout.WEST);
         buttonsRow.add(removeButton, BorderLayout.EAST);
@@ -246,6 +320,7 @@ public class MainGUI {
         toDoPanel.setOpaque(false);
 
         JButton plusButton = new JButton("+ Aggiungi ToDo");
+        plusButton.setName("UI");
 
         plusButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         plusButton.addActionListener(new ActionListener() {
@@ -410,7 +485,7 @@ public class MainGUI {
 
                 if(toDoPanel != null){
 
-                    Dimension fixedSize = new Dimension((int)(BachecheJPanel.getFirst().getWidth() * 0.90), 50);
+                    Dimension fixedSize = new Dimension(Integer.MAX_VALUE, 50);
 
                     newButton.setPreferredSize(fixedSize);
                     newButton.setMinimumSize(fixedSize);

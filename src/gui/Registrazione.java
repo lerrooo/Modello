@@ -19,13 +19,13 @@ public class Registrazione {
 
     JFrame regFrame;
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Registrazione");
-        frame.setContentPane(new Registrazione().RegistrazionePanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        JFrame frame = new JFrame("Registrazione");
+//        frame.setContentPane(new Registrazione().RegistrazionePanel);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.pack();
+//        frame.setVisible(true);
+//    }
     public Registrazione(){}
 
     public Registrazione(JFrame frameChiamante, Controller controller){
@@ -33,7 +33,7 @@ public class Registrazione {
             frameLogin = frameChiamante;
             regFrame = new JFrame("Registrazione");
             regFrame.setContentPane(RegistrazionePanel);
-            regFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            regFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             regFrame.pack();
             regFrame.setVisible(true);
 
