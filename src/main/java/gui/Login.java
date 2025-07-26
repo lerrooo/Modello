@@ -18,9 +18,6 @@ public class Login {
     private JButton accediButton;
     private JButton registratiButton;
 
-    public static void main(String[] args) {
-        showLogin();
-    }
     /**
      * Un metodo statico per riaprire il Login in seguito
      */
