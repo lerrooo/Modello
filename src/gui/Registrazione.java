@@ -40,7 +40,7 @@ public class Registrazione {
                         if (Arrays.equals(password, confermaPassword)) {
                                 try {
                                     controller.addUtente(nome, password);
-                                } catch (SQLException _) {
+                                } catch (SQLException ex) {
                                     //Catch block
                                 }
 

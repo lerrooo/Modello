@@ -67,7 +67,7 @@ public class ToDoGUI {
 
                 try{
                     dataLabel.setText(dataStr);
-                }catch (Exception _){
+                }catch (Exception ex){
                     JOptionPane.showMessageDialog(frameTodo, "Formato data non valido", "Errore", JOptionPane.INFORMATION_MESSAGE);
 
                 }
@@ -88,7 +88,7 @@ public class ToDoGUI {
                     if(risposta == JOptionPane.OK_OPTION){
                         try {
                             controller.removeToDo(nomeBacheca, nomeToDo);
-                        } catch (SQLException _) {
+                        } catch (SQLException ex) {
                             //Catch block
                         }
                         currentPanel.remove(todoBottone);
@@ -110,7 +110,7 @@ public class ToDoGUI {
                     if(risposta == JOptionPane.OK_OPTION){
                         try {
                             controller.removeCondivisione(nomeBacheca, nomeToDo);
-                        } catch (SQLException _) {
+                        } catch (SQLException ex) {
                             //Catch block
                         }
                         currentPanel.remove(todoBottone);
@@ -132,7 +132,7 @@ public class ToDoGUI {
                     LocalDate labelDate = null;
                     try{
                         labelDate = LocalDate.parse(dataLabel.getText());
-                    }catch (Exception _){
+                    }catch (Exception ex){
                         JOptionPane.showMessageDialog(null, "Errore nell'inserimento, verifica i dati!");
                     }
 
@@ -157,7 +157,7 @@ public class ToDoGUI {
                     JOptionPane.showMessageDialog(frame,"Modifiche effettuate con successo");
                     frameTodo.setVisible(false);
                     frameTodo.dispose();
-                } catch (SQLException _) {
+                } catch (SQLException ex) {
                     //Catch block
 
                 }

@@ -84,7 +84,7 @@ public class MainGUI {
                         buildPanels(centerPanelContainer);
                         coloraPanels();
 
-                    }catch (Exception _)
+                    }catch (Exception ex)
                     {
                         //Catch block
                     }
@@ -133,7 +133,7 @@ public class MainGUI {
                 controller.spostaToDo(nomeBacheca1, nomeToDo, nomeBacheca2);
                 buildPanels(centerPanelContainer);
                 coloraPanels();
-            } catch (SQLException _) {
+            } catch (SQLException ex) {
                 //Catch block
             }
 
@@ -164,7 +164,7 @@ public class MainGUI {
             String destinatario = JOptionPane.showInputDialog("Inserisci il nome dell'utente con cui condividere il ToDo");
             try {
                 controller.aggiungiCondivisione(nomeBacheca1, nomeToDo, destinatario);
-            } catch (SQLException _) {
+            } catch (SQLException EX) {
                 //Catch block
             }
 
@@ -172,7 +172,7 @@ public class MainGUI {
         visualizzaCondivisioneItem.addActionListener(e -> {
             try {
                 new ToDoCondivisi(controller);
-            } catch (SQLException _) {
+            } catch (SQLException ex) {
                 //Catch block
             }
 
@@ -201,7 +201,7 @@ public class MainGUI {
                 try {
                     LocalDate data = LocalDate.parse(dataStr); // converte da stringa a LocalDate
                     controller.setFiltro(Date.valueOf(data));
-                } catch (Exception _) {
+                } catch (Exception ex) {
                     JOptionPane.showMessageDialog(frame, "Formato data non valido", "Errore", JOptionPane.INFORMATION_MESSAGE);
                 }
 
@@ -290,7 +290,7 @@ public class MainGUI {
 
                         parent.remove(bachecaJPanel);
 
-                    } catch (SQLException _) {
+                    } catch (SQLException ex) {
                         //Catch block
                     }
 
@@ -343,7 +343,7 @@ public class MainGUI {
                     addToDo(nomeTemp, null, titolo.getText());
                     buildPanels(centerPanelContainer);
                     coloraPanels();
-                } catch (SQLException _) {
+                } catch (SQLException ex) {
                     //Catch block
                 }
         });
@@ -370,7 +370,7 @@ public class MainGUI {
                         return;
 
                     new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller, controller.autoreToDo(nomeBacheca, titolo.getText()));
-                } catch (SQLException _) {
+                } catch (SQLException ex) {
                     //Catch block
                 }
             }else {
@@ -578,7 +578,7 @@ public class MainGUI {
                                 controller.swapToDoOrder(nomeBacheca, newButton.getText(), insertIndex);
                                 buildPanels(centerPanelContainer);
                                 coloraPanels();
-                            } catch (SQLException _) {
+                            } catch (SQLException ex) {
                                 //Catch block
                             }
 
@@ -610,7 +610,7 @@ public class MainGUI {
                             toDoPanel.add(Box.createVerticalStrut(20)); // spazio verticale di 20px
 
                         }
-                    } catch (Exception _) {
+                    } catch (Exception ex) {
                         //Catch block
                     }
 

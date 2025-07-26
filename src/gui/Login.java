@@ -52,7 +52,7 @@ public class Login {
                 } else {
                     JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (SQLException _) {
+            } catch (SQLException ex) {
                 //Catch block
             }
         });
