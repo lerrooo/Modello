@@ -53,13 +53,13 @@ public class Controller {
      *
      */
     public boolean loginUtente(String nomeUtente, char[] password) throws SQLException {
-        utenteLoggato = uDAO.loginUtente(nomeUtente, password);
-        if(utenteLoggato != null)
-        {
-            getBachecheFromDB();
-            return true;
-        }
-        return false;
+            utenteLoggato = uDAO.loginUtente(nomeUtente, password);
+            if(utenteLoggato != null)
+            {
+                getBachecheFromDB();
+                return true;
+            }
+            return false;
     }
     /**
      * Prende tutte le bacheche dal DB
