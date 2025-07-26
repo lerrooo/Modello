@@ -1,4 +1,4 @@
-package main;
+package boot;
 import gui.Login;
 
 public class Boot {
