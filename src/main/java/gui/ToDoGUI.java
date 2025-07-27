@@ -136,7 +136,6 @@ public class ToDoGUI {
                         JOptionPane.showMessageDialog(null, "Errore nell'inserimento, verifica i dati!");
                     }
 
-                     // formato già corretto
 
                     if(labelDate == null)
                         return;

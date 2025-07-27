@@ -15,9 +15,6 @@ public class Bacheca {
         descrizione = descrizioneInserimento;
     }
 
-//    public void createToDo(String titoloToDo, LocalDate dataToDo, String descrizioneToDo, Utente utente){
-//        toDoList.add(new ToDo(titoloToDo, dataToDo, descrizioneToDo, utente));
-//    }
 
     public void deleteToDo(int index){
         toDoList.remove(index);
@@ -43,7 +40,6 @@ public class Bacheca {
     public void swapToDo(int indexToDoFirst, int indexToDoSecond){
         Collections.swap(toDoList, indexToDoFirst, indexToDoSecond);
     }
-
 
     public String getTitolo() {
         return titolo;

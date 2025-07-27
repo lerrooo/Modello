@@ -46,6 +46,7 @@ public class Login {
                 if (loginEffettuato){
                     new MainGUI(controller);
                     mainFrame.dispose(); // Chiude login
+
                 } else {
                     JOptionPane.showMessageDialog(mainFrame, "Utente non trovato", "Errore", JOptionPane.ERROR_MESSAGE);
                 }

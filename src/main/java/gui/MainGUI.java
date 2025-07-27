@@ -21,6 +21,9 @@ public class MainGUI {
     private static Controller controller;
     private static final ArrayList<JPanel> BachecheJPanel = new ArrayList<>();
     JPanel centerPanelContainer = new JPanel(new GridLayout(1, 3));
+    private static final String GENERIC_ERROR = "ERRORE - operazione non eseguita";
+    private static final String GENERIC_CONF = "Operazione andata a buon fine";
+
     /**
      * Si occupa di creare tutta la GUI quando viene instanziata dal Login
      *
@@ -86,7 +89,7 @@ public class MainGUI {
 
                     }catch (Exception ex)
                     {
-                        //Catch block
+                        JOptionPane.showMessageDialog(null,"ERRORE - bacheca già esistente");
                     }
                 });
         spostaToDoItem.addActionListener(e -> {
@@ -133,8 +136,9 @@ public class MainGUI {
                 controller.spostaToDo(nomeBacheca1, nomeToDo, nomeBacheca2);
                 buildPanels(centerPanelContainer);
                 coloraPanels();
+                JOptionPane.showMessageDialog(null,GENERIC_CONF);
             } catch (SQLException ex) {
-                //Catch block
+                JOptionPane.showMessageDialog(null,GENERIC_ERROR);
             }
 
         });
@@ -164,16 +168,18 @@ public class MainGUI {
             String destinatario = JOptionPane.showInputDialog("Inserisci il nome dell'utente con cui condividere il ToDo");
             try {
                 controller.aggiungiCondivisione(nomeBacheca1, nomeToDo, destinatario);
+                JOptionPane.showMessageDialog(null,GENERIC_CONF);
             } catch (SQLException EX) {
-                //Catch block
+                JOptionPane.showMessageDialog(null,GENERIC_ERROR);
             }
 
         });
         visualizzaCondivisioneItem.addActionListener(e -> {
             try {
                 new ToDoCondivisi(controller);
+                JOptionPane.showMessageDialog(null,GENERIC_CONF);
             } catch (SQLException ex) {
-                //Catch block
+                JOptionPane.showMessageDialog(null,GENERIC_ERROR);
             }
 
         });
@@ -201,8 +207,9 @@ public class MainGUI {
                 try {
                     LocalDate data = LocalDate.parse(dataStr); // converte da stringa a LocalDate
                     controller.setFiltro(Date.valueOf(data));
+                    JOptionPane.showMessageDialog(null,"Filtro aggiunto con successo");
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frame, "Formato data non valido", "Errore", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Formato data non valido", GENERIC_ERROR, JOptionPane.INFORMATION_MESSAGE);
                 }
 
 
@@ -287,11 +294,11 @@ public class MainGUI {
                 if(risposta == JOptionPane.OK_OPTION){
                     try {
                         controller.removeBacheca(titolo.getText());
-
                         parent.remove(bachecaJPanel);
+                        JOptionPane.showMessageDialog(null,GENERIC_CONF);
 
                     } catch (SQLException ex) {
-                        //Catch block
+                            JOptionPane.showMessageDialog(null,GENERIC_ERROR);
                     }
 
                     parent.revalidate();
@@ -343,8 +350,9 @@ public class MainGUI {
                     addToDo(nomeTemp, null, titolo.getText());
                     buildPanels(centerPanelContainer);
                     coloraPanels();
+                    JOptionPane.showMessageDialog(null,GENERIC_CONF);
                 } catch (SQLException ex) {
-                    //Catch block
+                    JOptionPane.showMessageDialog(null,"ToDo già esistente");
                 }
         });
 
@@ -370,6 +378,7 @@ public class MainGUI {
                         return;
 
                     new ToDoGUI(toDoPanel, toDoButton, search, nomeBacheca, controller, controller.autoreToDo(nomeBacheca, titolo.getText()));
+
                 } catch (SQLException ex) {
                     //Catch block
                 }
